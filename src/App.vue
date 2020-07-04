@@ -1,28 +1,26 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div>
+    <el-button>el-button</el-button>
+    <el-radio-group v-model="radio" size="mini">
+      <el-radio-button label="上海"></el-radio-button>
+      <el-radio-button label="北京"></el-radio-button>
+      <el-radio-button label="广州" disabled></el-radio-button>
+      <el-radio-button label="深圳"></el-radio-button>
+    </el-radio-group>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-
 export default {
-  name: 'App',
-  components: {
-    HelloWorld
+  name: "app",
+  components: {},
+  data(){
+    return {
+      radio: "广州"
+    }
   }
-}
+};
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
 </style>
