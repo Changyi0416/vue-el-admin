@@ -1,12 +1,6 @@
 <template>
   <div>
-    <el-button>el-button</el-button>
-    <el-radio-group v-model="radio" size="mini">
-      <el-radio-button label="上海"></el-radio-button>
-      <el-radio-button label="北京"></el-radio-button>
-      <el-radio-button label="广州" disabled></el-radio-button>
-      <el-radio-button label="深圳"></el-radio-button>
-    </el-radio-group>
+    <router-view></router-view>
   </div>
 </template>
 
@@ -16,11 +10,29 @@ export default {
   components: {},
   data(){
     return {
-      radio: "广州"
     }
   }
 };
 </script>
 
 <style>
+/* 修改全局滚动条样式 */
+::-webkit-scrollbar{
+  width:10px;
+  height:10px;
+}
+::-webkit-scrollbar-track{
+  background: rgb(239, 239, 239);
+  border-radius:2px;
+}
+::-webkit-scrollbar-thumb{
+  background: #bfbfbf;
+  border-radius:10px;
+}
+::-webkit-scrollbar-thumb:hover{
+  background: #b1b1b1;
+}
+::-webkit-scrollbar-corner{
+  background: #179a16;
+}
 </style>
