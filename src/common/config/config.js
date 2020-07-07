@@ -13,10 +13,11 @@ export default {
             name: "首页",
             pathname: 'index'
           },
-          /* {
+          {
             icon: "el-icon-picture",
-            name: "相册管理"
-          }, */
+            name: "相册管理",
+            pathname: 'image'
+          },
           {
             icon: "el-icon-s-shop",
             name: "商品列表",

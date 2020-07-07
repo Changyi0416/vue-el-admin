@@ -27,9 +27,8 @@
                 src="https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png"
               ></el-avatar>yangqian
             </template>
-            <el-menu-item index="6-1">选项1</el-menu-item>
-            <el-menu-item index="6-2">选项2</el-menu-item>
-            <el-menu-item index="6-3">选项3</el-menu-item>
+            <el-menu-item index="6-1">修改</el-menu-item>
+            <el-menu-item index="6-2">退出</el-menu-item>
           </el-submenu>
         </el-menu>
       </el-header>
@@ -47,7 +46,7 @@
             </el-menu-item>
           </el-menu>
         </el-aside>
-        <el-main class="bg-light">
+        <el-main class="bg-light position-relative" style="padding-bottom: 80px;">
           <!-- 内容-面包屑 -->
           <div
             class="border-bottom bg-white mb-2"
@@ -84,17 +83,17 @@ export default {
   },
   created() {
     //初始化菜单
-    this.navBar = this.$conf.navBar;
+    this.navBar = this.$conf.navBar
     //获取面包屑导航
     this.getRouterBran();
     //刷新页面时，主、侧导航位置依然在原位
-    this.__initNavBarActive();
+    this.__initNavBarActive()
   },
   watch: {
     //解决路由变化，面包屑导航数据不自动变更的问题
-    $route(to, from) {
+    $route() {
       //监听路由变化，执行面包屑函数
-      this.getRouterBran();
+      this.getRouterBran()
       //存储主、侧导航的Index
       localStorage.setItem(
         "navBarActive",
@@ -113,11 +112,11 @@ export default {
         );
       },
       set(val) {
-        this.navBar.list[this.navBar.activeIndex].asideActiveIndex = val;
+        this.navBar.list[this.navBar.activeIndex].asideActiveIndex = val
       }
     },
     asideMenus() {
-      return this.navBar.list[this.navBar.activeIndex].asideList || [];
+      return this.navBar.list[this.navBar.activeIndex].asideList || []
     }
   },
   methods: {
@@ -125,15 +124,15 @@ export default {
     __initNavBarActive() {
       let l = localStorage.getItem("navBarActive");
       if (l) l = JSON.parse(l);
-      this.navBar.activeIndex = l.top;
-      this.asideActiveIndex = l.left;
+      this.navBar.activeIndex = l.top
+      this.asideActiveIndex = l.left
     },
     //获取面包屑导航
     getRouterBran() {
       //过滤掉没有name值得
       let a = this.$route.matched.filter(b => b.name);
       let arr = [];
-      a.forEach((item, i) => {
+      a.forEach((item) => {
         //首页不需要面包屑
         if (item.name === "index" || item.name === "layout") return;
         arr.push({
@@ -143,24 +142,32 @@ export default {
         });
       });
       if (arr.length > 0)
-        arr.unshift({ name: "index", path: "/index", title: "后台首页" });
-      this.breadcrumb = arr;
+        arr.unshift({ name: "index", path: "/index", title: "后台首页" })
+      this.breadcrumb = arr
       // console.log(arr)
     },
     //头部导航栏点击
-    topSelect(key, keyPath) {
-      this.navBar.activeIndex = key;
+    topSelect(key) {
+      if(key === '6-1') {
+        console.log('修改资料')
+        return
+      }
+      else if(key === '6-2') {
+        console.log('退出')
+        return
+      }
+      this.navBar.activeIndex = key
       //默认跳转到当前激活
-      if (this.asideMenus.length == 0) return;
+      if (this.asideMenus.length == 0) return
       this.$router.push({
         name: this.asideMenus[+this.asideActiveIndex].pathname
       });
     },
     //侧边栏导航点击
-    asideSelect(key, keyPath) {
-      this.asideActiveIndex = key;
+    asideSelect(key) {
+      this.asideActiveIndex = key
       //跳转到当前页面
-      this.$router.push({ name: this.asideMenus[+key].pathname });
+      this.$router.push({ name: this.asideMenus[+key].pathname })
     }
   }
 };
