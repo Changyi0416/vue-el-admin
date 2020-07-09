@@ -33,7 +33,7 @@
         </el-menu>
       </el-header>
       <el-container style="height: 100%;">
-        <el-aside width="200px">
+        <el-aside width="180px">
           <el-menu
             style="height: 100%;"
             :default-active="asideActiveIndex"
