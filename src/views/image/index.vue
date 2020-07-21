@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-container class="position-absolute" style="top: 55px; bottom: 0; left: 0; right: 0;">
+    <el-container class="bg-light position-absolute" style="top: 55px; bottom: 0; left: 0; right: 0;">
       <!-- 头部 -->
       <el-header class="d-flex">
         <el-form :model="form" ref="form" class="w-100 d-flex align-items-center">

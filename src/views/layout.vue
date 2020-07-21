@@ -46,7 +46,7 @@
             </el-menu-item>
           </el-menu>
         </el-aside>
-        <el-main class="bg-light position-relative" style="padding-bottom: 80px;">
+        <el-main class="position-relative" style="padding-bottom: 80px;">
           <!-- 内容-面包屑 -->
           <div
             class="border-bottom bg-white mb-2"
