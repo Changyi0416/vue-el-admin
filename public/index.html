@@ -18,6 +18,15 @@
   </noscript>
   <div id="app"></div>
   <!-- built files will be auto injected -->
+  <script>
+    setTimeout(()=> {
+      var btn = document.getElementsByTagName('button');
+      console.log(btn.length);
+      for (let i = 0; i < btn.length; i++) {
+        btn[i].classList.add("btn");
+      }
+    }, 1000)
+  </script>
 </body>
 
 </html>

@@ -6,7 +6,9 @@
           <!-- 操作按钮+搜索+高级搜索 -->
           <button-search ref="buttonSearch" placeholder="请输入商品名称" @search="search">
             <template #left>
-              <el-button size="mini" type="success">发布商品</el-button>
+              <router-link :to="{name: 'shop_goods_create'}" class="mr-2">
+                <el-button size="mini" type="success">发布商品</el-button>
+              </router-link>
               <el-button size="mini" type="danger">批量删除</el-button>
               <el-button size="mini">下架</el-button>
               <el-button size="mini">推荐</el-button>
@@ -176,7 +178,9 @@ export default {
         }
 			}
     },
-		handleClick(tab, event) {},
+		handleClick(tab, event) {
+      console.log(tab);
+    },
 		//搜索
     search(val) {
       if (typeof val === "string") {

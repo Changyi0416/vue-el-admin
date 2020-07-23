@@ -6,77 +6,80 @@
  * **/
 
 let routes = [
-    {
-        path: '/',
-        name: 'layout',
-        component: 'layout',
-        redirect: { name: 'index' },
-        children: [
-            {
+  {
+    path: '/',
+    name: 'layout',
+    component: 'layout',
+    redirect: { name: 'index' },
+    children: [
+      {
+        // path: '/main',
+        // name: 'main',
+        meta: { title: '后台首页' },
+        component: 'index/index'
+      },
+      {
+        meta: { title: '相册管理' },
+        component: 'image/index'
+      },
+      {
 
-                // path: '/main',
-                // name: 'main',
-                meta: { title: '后台首页' },
-                component: 'index/index'
-            },
-            {
-                meta: { title: '相册管理' },
-                component: 'image/index'
-            },
-            {
-
-                // path: '/shop/goods/list',
-                // name: 'shop_goods_list',
-                meta: { title: '商品列表' },
-                component: 'shop/goods/list'
-            }
-        ]
-    },
-    {
-        // path: '/login',
-        // name: 'login',
-        meta: { title: '登录页' },
-        component: 'login/index'
-    },
-    {
-        path: '*',
-        redirect: { name: 'index' }
-    }
+        // path: '/shop/goods/list',
+        // name: 'shop_goods_list',
+        meta: { title: '商品列表' },
+        component: 'shop/goods/list'
+      },
+      {
+        meta: { title: '创建商品' },
+        component: 'shop/goods/create'
+      }
+    ]
+  },
+  {
+    // path: '/login',
+    // name: 'login',
+    meta: { title: '登录页' },
+    component: 'login/index'
+  },
+  {
+    path: '*',
+    redirect: { name: 'index' }
+  }
 ];
 
 //定义路由信息方法
 let getRoutes = function () {
-    createRoute(routes);
-    return routes
+  createRoute(routes);
+  return routes
 }
 
 //自动生成路由
 function createRoute(arr) {
-    for (let i = 0; i < arr.length; i++) {
-        if (!arr[i].component) return
-        //去除尾部/index
-        let val = getVal(arr[i].component);
-        //生成path
-        arr[i].path = arr[i].path || `/${val}`
-        //生成name
-        arr[i].name = arr[i].name || val.replace(/\//g, '_')
-        //生成component
-        let componentFun = import(`../../views/${arr[i].component}.vue`)
-        arr[i].component = () => componentFun
-        if (arr[i].children && arr[i].children.length > 0) {
-            createRoute(arr[i].children)
-        }
+  for (let i = 0; i < arr.length; i++) {
+    if (!arr[i].component) return
+    //去除尾部/index
+    let val = getVal(arr[i].component);
+    //生成path
+    arr[i].path = arr[i].path || `/${val}`
+    //生成name
+    arr[i].name = arr[i].name || val.replace(/\//g, '_')
+    //生成component
+    let componentFun = import(`../../views/${arr[i].component}.vue`)
+    arr[i].component = () => componentFun
+    if (arr[i].children && arr[i].children.length > 0) {
+      createRoute(arr[i].children)
     }
+  }
 }
 
 //去除尾部/index
 function getVal(str) {
-    //获取最后一个/的索引
-    let lastIndex = str.lastIndexOf('/')
-    //获取最后一个/后面的值
-    let lastStr = str.substring(lastIndex + 1, str.length)
-    //去除尾部/index
-    if (lastStr === 'index') return str = str.substring(lastIndex, -1);
-    return str
+  //获取最后一个/的索引
+  let lastIndex = str.lastIndexOf('/')
+  //获取最后一个/后面的值
+  let lastStr = str.substring(lastIndex + 1, str.length)
+  //去除尾部/index
+  if (lastStr === 'index') return str = str.substring(lastIndex, -1);
+  return str
 }
 export default getRoutes()
