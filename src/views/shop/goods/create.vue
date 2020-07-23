@@ -61,8 +61,8 @@
               </el-select>
             </el-form-item>
             <el-form-item>
-              <el-button type="primary" @click="onSubmit">立即创建</el-button>
-              <el-button>取消</el-button>
+              <el-button class="btn" type="primary" @click="onSubmit">立即创建</el-button>
+              <el-button class="btn">取消</el-button>
             </el-form-item>
           </el-form>
         </el-tab-pane>
@@ -81,7 +81,7 @@
                   <!-- <span class="text-muted" style="width: 75px; font-size: 14px;">规格项：</span> -->
                   规格项：
                   <el-input v-model="ggx" size="medium" placeholder="请选择" style="width: 200px;">
-                    <el-button slot="append"><i class="el-icon-more"></i></el-button>
+                    <el-button class="btn" slot="append"><i class="el-icon-more"></i></el-button>
                   </el-input>
                   <el-radio-group class="ml-3" v-model="xz">
                     <el-radio :label="0">无</el-radio>
@@ -89,9 +89,9 @@
                     <el-radio :label="2">图片</el-radio>
                   </el-radio-group>
                   <div class="ml-auto">
-                    <el-button icon="el-icon-bottom" plain size="mini"></el-button>
-                    <el-button plain size="mini"><i class="el-icon-top"></i></el-button>
-                    <el-button type="text">删除</el-button>
+                    <el-button class="btn" icon="el-icon-bottom" plain size="mini"></el-button>
+                    <el-button class="btn" plain size="mini"><i class="el-icon-top"></i></el-button>
+                    <el-button class="btn" type="text">删除</el-button>
                     <!-- <span class="text-primary p-2" style="cursor: pointer;">删除</span> -->
                   </div>
                 </div>
@@ -102,12 +102,12 @@
               <el-button type="success" size="mini" class="mt-3">添加规格</el-button>
             </el-form-item>
             <el-form-item label="批量设置">
-              <el-button type="text" class="px-2" @click="plset">销售价</el-button>
-              <el-button type="text" @click="plset">市场价</el-button>
-              <el-button type="text" @click="plset">成本价</el-button>
-              <el-button type="text" @click="plset">库存</el-button>
-              <el-button type="text" @click="plset">体积</el-button>
-              <el-button type="text" @click="plset">重量</el-button>
+              <el-button type="text" class="btn px-2" @click="plset">销售价</el-button>
+              <el-button type="text" class="btn px-2" @click="plset">市场价</el-button>
+              <el-button type="text" class="btn px-2" @click="plset">成本价</el-button>
+              <el-button type="text" class="btn px-2" @click="plset">库存</el-button>
+              <el-button type="text" class="btn px-2" @click="plset">体积</el-button>
+              <el-button type="text" class="btn px-2" @click="plset">重量</el-button>
             </el-form-item>
             <el-form-item label="规格设置">
             </el-form-item>
@@ -154,6 +154,7 @@
 </template>
 
 <script>
+	import { mapState } from 'vuex';
 export default {
   data() {
     return {
@@ -447,6 +448,16 @@ export default {
         }
       ]
     };
+  },
+  computed: {
+  	...mapState('module/goods_cerate', {
+			// ceshi: state => state.goods_create.ceshi
+			ceshi:  state => state.ceshi
+		})
+  },
+	mounted(){
+		console.log(this.ceshi);
+    // console.log(this.$store.state.goods_create.ceshi);
   },
   methods: {
     handleClick(tab, event) {
