@@ -19,7 +19,7 @@
 	        <div class="ml-auto">
 						<!-- 上移 -->
 	          <el-button class="btn" icon="el-icon-top" plain size="mini" :disabled="i === 0"
-						@click="moveSkuCard({sign: 'moveUp', i})"></i></el-button>
+						@click="moveSkuCard({sign: 'moveUp', i})"></el-button>
 						<!-- 下移 -->
 	          <el-button class="btn" icon="el-icon-bottom" plain size="mini" :disabled="sku_card.length === (i+1)" 
 						@click="moveSkuCard({sign: 'moveDown', i})"></el-button>

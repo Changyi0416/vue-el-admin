@@ -39,7 +39,14 @@
 					</div> -->
 				</el-tab-pane>
         <el-tab-pane label="媒体设置">媒体设置</el-tab-pane>
-        <el-tab-pane label="商品详情">商品详情</el-tab-pane>
+        <el-tab-pane label="商品详情">
+					<!-- 富文本编辑器 -->
+					<tinymce
+						ref="editor"
+						v-model="msg"
+						@onClick="onClick"
+					/>
+				</el-tab-pane>
         <el-tab-pane label="折扣设置">折扣设置</el-tab-pane>
       </el-tabs>
     </div>
@@ -51,30 +58,25 @@
 	import baseSet from '@/components/shop/goods/base-set.vue';
 	import simpleAttrs from '@/components/shop/goods/simple-attrs.vue';
 	import manyAttrs from '@/components/shop/goods/many-attrs.vue';
+	// 富文本编辑器
+	import tinymce from '@/components/common/tinymce.vue'
 export default {
-	components: { baseSet, simpleAttrs, manyAttrs },
+	components: { baseSet, simpleAttrs, manyAttrs, tinymce },
   data() {
     return {
       tabIndex: '1',
-			colors: [{
-					text: "Aquamarine"
-			}, {
-					text: "Hotpink"
-			}, {
-					text: "Gold"
-			}, {
-					text: "Crimson"
-			}, {
-					text: "Blueviolet"
-			}, {
-					text: "Lightblue"
-			}, {
-					text: "Cornflowerblue"
-			}, {
-					text: "Skyblue"
-			}, {
-					text: "Burlywood"
-			}]
+			/* colors: [
+				{ text: "Aquamarine" }, 
+				{ text: "Hotpink" },
+				{ text: "Gold" }, 
+				{ text: "Crimson" }, 
+				{ text: "Blueviolet" }, 
+				{ text: "Lightblue" }, 
+				{ text: "Cornflowerblue" }, 
+				{ text: "Skyblue" }, 
+				{ text: "Burlywood" }
+			], */
+			msg: 'Welcome to Use Tinymce Editor',
     };
   },
   computed: {
@@ -87,10 +89,16 @@ export default {
 			this.vModelState({key, val});
 		},
     handleClick(tab, event) {
-      console.log(tab);
+      // console.log(tab);
     },
     //批量设置
-    plset(){ }
+		plset(){ },
+		// 鼠标单击的事件
+		onClick (e, editor) {
+				console.log('Element clicked')
+				console.log(e)
+				console.log(editor)
+		},
   }
 };
 </script>
