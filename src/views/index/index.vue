@@ -22,9 +22,7 @@
           <div slot="header" class="clearfix">
             <span>{{ item.title }}</span>
             <small class="text-muted" style="float: right; padding: 3px 0">
-              {{
-              item.desc
-              }}
+              {{ item.desc }}
             </small>
           </div>
           <el-row :gutter="i | getGutter">

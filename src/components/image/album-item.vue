@@ -7,7 +7,12 @@
       @click.stop="$emit('handel', i)"
     >
       {{item.name}}
-      <el-dropdown class="ml-auto">
+			<!-- 仅展示数量 -->
+			<span class="btn btn-light text-muted ml-auto" size="mini" v-if="!isShow">
+			  {{item.num}}
+			</span>
+			<!-- 修改功能 -->
+      <el-dropdown class="ml-auto" v-else>
         <span class="btn btn-light text-muted" size="mini">
           {{item.num}}
           <i class="el-icon-arrow-down el-icon--right"></i>
@@ -29,7 +34,11 @@ export default {
     isActive: {
       type: Boolean,
       default: false
-    }
+    },
+		isShow: { // 是否显示修改功能
+			type: Boolean,
+			default: true
+		}
   },
 };
 </script>

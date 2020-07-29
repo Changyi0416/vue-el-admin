@@ -1,17 +1,30 @@
 <template>
   <div>
     <router-view></router-view>
+		
+		<!-- 创建商品->商品规格->多规格->规格属性添加图片 -->
+		<image-dialog ref="imageDialog" :maxNum="1"></image-dialog>
   </div>
 </template>
 
 <script>
+import imageDialog from '@/components/image/image-dialog.vue';
 export default {
   name: "app",
-  components: {},
-  data(){
-    return {
-    }
-  }
+	components: { imageDialog },
+	//依赖注入
+	provide(){
+		return {
+			app: this,
+		}
+	},
+  methods: {
+		//打开相册弹出层
+		chooseImage(callback){
+			//接受到的callback参数传给子组件(imageDialog)的open方法
+			this.$refs.imageDialog.open(callback);
+		}
+	}
 };
 </script>
 
