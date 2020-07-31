@@ -8,7 +8,7 @@
 	        规格项：
 	        <el-input size="medium" placeholder="请选择" style="width: 200px;"
 					:value="item.name" @input="vModelCard(i, 'name', $event)">
-	          <el-button class="btn" slot="append"><i class="el-icon-more"></i></el-button>
+	          <el-button class="btn" slot="append" @click="chooseSkuval(i)"><i class="el-icon-more"></i></el-button>
 	        </el-input>
 	        <el-radio-group class="ml-3"
 					:value="item.type" @input="vModelCard(i, 'type', $event)">
@@ -58,6 +58,7 @@
 	import manyAttrsVal from '@/components/shop/goods/many-attrs-val.vue';
 	import skuTable from '@/components/shop/goods/sku-table.vue';
 	export default {
+		inject: ['app'],
 		components: { manyAttrsVal, skuTable },
 		data(){
 			return {}
@@ -72,7 +73,16 @@
 				this.vModelSkuCard({i, key, val});
 			},
 			//批量设置
-			plset(){ }
+			plset(){ },
+			//选择规格项
+			chooseSkuval(i){
+				this.app.chooseSkuval((res) => {
+					console.log(res);
+					this.vModelCard(i, 'name', res.name);
+					this.vModelCard(i, 'type', res.type);
+					this.vModelCard(i, 'list', res.list);
+				})
+			}
 		}
 		
 	}

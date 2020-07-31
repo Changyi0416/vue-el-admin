@@ -43,7 +43,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 .album-active {
   color: #67c23a !important;
   background-color: #f0f9eb !important ;

@@ -1,17 +1,19 @@
 <template>
   <div>
     <router-view></router-view>
-		
 		<!-- 创建商品->商品规格->多规格->规格属性添加图片 -->
 		<image-dialog ref="imageDialog" :maxNum="1"></image-dialog>
+		<!-- 创建商品->商品规格->多规格->选择规格项 -->
+		<sku-dialog ref="skuDialog"></sku-dialog>
   </div>
 </template>
 
 <script>
 import imageDialog from '@/components/image/image-dialog.vue';
+import skuDialog from '@/components/shop/goods/sku-dialog.vue';
 export default {
   name: "app",
-	components: { imageDialog },
+	components: { imageDialog, skuDialog },
 	//依赖注入
 	provide(){
 		return {
@@ -23,6 +25,10 @@ export default {
 		chooseImage(callback){
 			//接受到的callback参数传给子组件(imageDialog)的open方法
 			this.$refs.imageDialog.open(callback);
+		},
+		//打开选择规格值得弹出层
+		chooseSkuval(callback){
+			this.$refs.skuDialog.open(callback);
 		}
 	}
 };

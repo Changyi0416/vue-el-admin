@@ -1,7 +1,7 @@
 <template>
   <!-- 相册弹出层-选择相片 -->
   <el-dialog title="图片管理" class="chooseImage" :visible.sync="shopImageDia" width="90%" top="3vh">
-    <el-container class="bg-light" style="height: 65vh;">
+    <el-container style="height: 65vh;">
       <!-- 头部 -->
       <el-header class="d-flex">
         <el-form :model="form" ref="form" class="w-100 d-flex align-items-center">
