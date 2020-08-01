@@ -38,7 +38,29 @@
 							>{{color.text}}</div>
 					</div> -->
 				</el-tab-pane>
-        <el-tab-pane label="媒体设置">媒体设置</el-tab-pane>
+        <el-tab-pane label="媒体设置">
+					<el-form label-width="80">
+						<el-form-item label="商品大图">
+							<div class="d-flex flex-wrap">
+								<div class="border rounded d-flex align-items-center justify-content-center mr-3 mb-3 position-relative shopPic"
+								v-for="(item, i) in shopPics" :key="i"
+								@click="chooseImage(i)">
+									<!-- 删除 -->
+									<i class="el-icon-delete p-1 bg-secondary text-white rounded position-absolute" 
+									style="top: 0; right: 0;"
+									@click.stop="deletePic(i)"></i>
+									<img v-if="item.img" :src="item.img" alt="" class="w-100 h-100">
+									<i class="el-icon-plus" v-else
+									style="font-size: 30px; color: rgb(207, 209, 212);"></i>
+								</div>
+								<div class="border rounded d-flex align-items-center justify-content-center mr-3 mb-3 shopPic"
+								@click="chooseImage" v-if="shopPics.length < 9">
+									<i class="el-icon-plus" style="font-size: 30px; color: rgb(207, 209, 212);"></i>
+								</div>
+							</div>
+						</el-form-item>
+					</el-form>
+				</el-tab-pane>
         <el-tab-pane label="商品详情">
 					<!-- 富文本编辑器 -->
 					<tinymce
@@ -61,10 +83,11 @@
 	// 富文本编辑器
 	import tinymce from '@/components/common/tinymce.vue'
 export default {
+	inject: ['app'],
 	components: { baseSet, simpleAttrs, manyAttrs, tinymce },
   data() {
     return {
-      tabIndex: '1',
+      tabIndex: '3',
 			/* colors: [
 				{ text: "Aquamarine" }, 
 				{ text: "Hotpink" },
@@ -76,28 +99,64 @@ export default {
 				{ text: "Skyblue" }, 
 				{ text: "Burlywood" }
 			], */
+			//富文本msh
 			msg: 'Welcome to Use Tinymce Editor',
     };
   },
   computed: {
-		...mapState('goods_create', ['skus_type'])
+		...mapState('goods_create', ['skus_type', 'shopPics'])
   },
+	created(){
+		console.log(this.shopPics)
+	},
   methods: {
 		...mapMutations('goods_create', ['vModelState']),
 		//修改表单的值
 		vModel(key, val){
 			this.vModelState({key, val});
 		},
+		//tab选项卡切换
     handleClick(tab, event) {
       // console.log(tab);
     },
-    //批量设置
-		plset(){ },
-		// 鼠标单击的事件
+		//选择商品大图
+		chooseImage(i){
+			let maxNum = 9, len = this.shopPics.length;
+			let count = (maxNum - len) == 0 ? 1 : maxNum - len
+			this.app.chooseImage(res => {
+				//更换已选中的图
+				if(typeof i === 'number') {
+					this.shopPics.splice(i, 1, res[0])
+					this.vModel('shopPics', this.shopPics);
+					return
+				}
+				//添加商品详情图
+				let arr = [...this.shopPics, ...res];
+				this.vModel('shopPics', arr);
+			}, count)
+		},
+		//删除商品大图
+		deletePic(i){
+			this.$confirm('是否删除该图片', '提示', {
+				confirmButtonText: '确定',
+				cancelButtonText: '取消',
+				type: 'warning'
+			})
+			.then(() => {
+				this.shopPics.splice(i, 1)
+				this.vModel('shopPics', this.shopPics);
+				this.$message({
+					type: 'success',
+					message: '删除成功'
+				})
+			})
+			.catch(e => e)
+		},
+		// 富文本点击事件
 		onClick (e, editor) {
-				console.log('Element clicked')
-				console.log(e)
-				console.log(editor)
+			console.log('Element clicked')
+			console.log(e)
+			console.log(editor)
 		},
   }
 };
@@ -116,5 +175,13 @@ export default {
 }
 .card-header .el-button--mini, .el-button--small{
   padding: 8px;
+}
+
+/* 商品大图 */
+.shopPic {
+	width: 120px; 
+	height: 120px; 
+	cursor: pointer; 
+	border-style: dashed !important;
 }
 </style>

@@ -40,15 +40,19 @@
 	    <el-button type="success" size="mini" @click="addSkuCard">添加规格</el-button>
 	  </el-form-item>
 	  <el-form-item label="批量设置">
-	    <el-button type="text" class="btn px-2" @click="plset">销售价</el-button>
-	    <el-button type="text" class="btn px-2" @click="plset">市场价</el-button>
-	    <el-button type="text" class="btn px-2" @click="plset">成本价</el-button>
-	    <el-button type="text" class="btn px-2" @click="plset">库存</el-button>
-	    <el-button type="text" class="btn px-2" @click="plset">体积</el-button>
-	    <el-button type="text" class="btn px-2" @click="plset">重量</el-button>
+	    <template v-if="!isBatchset">
+				<el-button type="text" class="btn px-2"
+				v-for="(item, i) in batchsetArr" :key="i"
+				@click="batchset(item)">{{item.name}}</el-button>
+			</template>
+			<div v-else class="d-flex align-items-center">
+				<el-input v-model="batchsetVal" size="small" :placeholder="batchsetPlaceholder" class="mr-2" style="width: 150px;"></el-input>
+				<el-button class="btn" type="primary" size="mini" @click="batchsetConfirm">设置</el-button>
+				<el-button class="btn" size="mini" @click="batchsetCancel">取消</el-button>
+			</div>
 	  </el-form-item>
 	  <el-form-item label="规格设置" class="mb-5">
-			<sku-table></sku-table>
+			<sku-table ref="skuTable"></sku-table>
 	  </el-form-item>
 	</el-form>
 </template>
@@ -61,7 +65,20 @@
 		inject: ['app'],
 		components: { manyAttrsVal, skuTable },
 		data(){
-			return {}
+			return {
+				//批量设置按钮文字数组
+				batchsetArr: [
+					{name: '销售价', key: 'pprice'}, 
+					{name: '市场价', key: 'oprice'}, 
+					{name: '成本价', key: 'cprice'}, 
+					{name: '库存', key: 'stock'}, 
+					{name: '体积', key: 'volume'}, 
+					{name: '重量', key: 'weight'}
+				],
+				isBatchset: false,
+				batchsetPlaceholder: '',
+				batchsetVal: '',
+			}
 		},
 		computed: {
 			...mapState('goods_create', ['sku_card']),
@@ -72,16 +89,33 @@
 			vModelCard(i, key, val){
 				this.vModelSkuCard({i, key, val});
 			},
-			//批量设置
-			plset(){ },
 			//选择规格项
 			chooseSkuval(i){
 				this.app.chooseSkuval((res) => {
-					console.log(res);
+					// console.log(res);
 					this.vModelCard(i, 'name', res.name);
 					this.vModelCard(i, 'type', res.type);
 					this.vModelCard(i, 'list', res.list);
 				})
+			},
+			//批量设置
+			batchset(item){
+				this.isBatchset = item.key
+				this.batchsetPlaceholder = item.name;
+			},
+			//确认批量设置
+			batchsetConfirm(){
+				let tableList = this.$refs.skuTable.tableList
+				console.log(tableList)
+				tableList.forEach(item => {
+					item[this.isBatchset] = this.batchsetVal
+				})
+				this.batchsetCancel()
+			},
+			//取消批量设置
+			batchsetCancel(){
+				this.isBatchset = false
+				this.batchsetVal = ''
 			}
 		}
 		

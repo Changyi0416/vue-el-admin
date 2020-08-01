@@ -68,7 +68,9 @@ export default {
 			{name: '体积', rowspan: 2, width: '100'},
 			{name: '重量', rowspan: 2, width: '100'},
 			{name: '编码', rowspan: 2, width: '100'},
-		]
+		],
+		//商品详情大图
+		shopPics: []
   },
   getters: {
 		//【商品规格】占位几列
@@ -115,7 +117,7 @@ export default {
 		//修改state
 		vModelState(state, {key, val}){
 			state[key] = val;
-			console.log(key, val);
+			// console.log(key, val);
 		},
 		//添加规格
 		addSkuCard(state, obj){

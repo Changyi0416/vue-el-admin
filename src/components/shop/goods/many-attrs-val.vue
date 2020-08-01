@@ -56,7 +56,7 @@
 			chooseImage(i, j){
 				this.app.chooseImage((res) => {
 					this.vModelSkuVal({i, j, key: 'image', val: res[0].img});
-				});
+				}, 1);
 			}
 		}
 	}

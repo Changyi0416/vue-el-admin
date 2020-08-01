@@ -52,13 +52,13 @@
 		},
 		created(){
 			this.tableList = this.tableData;
-			console.log(this.tableList);
+			// console.log(this.tableList);
 		},
 		methods: {
 			chooseImage(item){
 				this.app.chooseImage((res) => {
 					item.image = res[0].img
-				})
+				}, 1)
 			}
 		}
 	}

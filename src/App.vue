@@ -2,7 +2,7 @@
   <div>
     <router-view></router-view>
 		<!-- 创建商品->商品规格->多规格->规格属性添加图片 -->
-		<image-dialog ref="imageDialog" :maxNum="1"></image-dialog>
+		<image-dialog ref="imageDialog" :maxNum="maxNum"></image-dialog>
 		<!-- 创建商品->商品规格->多规格->选择规格项 -->
 		<sku-dialog ref="skuDialog"></sku-dialog>
   </div>
@@ -20,9 +20,15 @@ export default {
 			app: this,
 		}
 	},
+	data(){
+		return {
+			maxNum: 1
+		}
+	},
   methods: {
 		//打开相册弹出层
-		chooseImage(callback){
+		chooseImage(callback, maxNum){
+			this.maxNum = maxNum
 			//接受到的callback参数传给子组件(imageDialog)的open方法
 			this.$refs.imageDialog.open(callback);
 		},
