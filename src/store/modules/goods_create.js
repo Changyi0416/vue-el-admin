@@ -69,8 +69,17 @@ export default {
 			{name: '重量', rowspan: 2, width: '100'},
 			{name: '编码', rowspan: 2, width: '100'},
 		],
+		
+		//商品属性类型
+		shopType: '',
+		//商品属性
+		shopAttrs: {
+			phone: ''
+		},
 		//商品详情大图
-		shopPics: []
+		shopPics: [],
+		//折扣设置->会员价
+		discount: 0
   },
   getters: {
 		//【商品规格】占位几列
@@ -158,7 +167,11 @@ export default {
 		//拖拽排序规格值
 		sortSkuVal(state, {i, list}){
 			store.sku_card[i].list = list;
-		}
+		},
+		//修改商品属性
+		vModelShopAttrs(state, { key, val}){
+			state.shopAttrs[key] = val;
+		},
   },
   actions: {
 

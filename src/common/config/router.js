@@ -32,6 +32,18 @@ let routes = [
       {
         meta: { title: '创建商品' },
         component: 'shop/goods/create'
+      },
+      {
+        meta: { title: '分类管理' },
+        component: 'shop/category/list'
+      },
+      {
+        meta: { title: '商品规格管理' },
+        component: 'shop/sku/list'
+      },
+			{
+        meta: { title: '商品类型管理' },
+        component: 'shop/type/list'
       }
     ]
   },

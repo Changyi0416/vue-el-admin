@@ -30,13 +30,40 @@
 						<many-attrs></many-attrs>
 					</template>
         </el-tab-pane>
-        <el-tab-pane label="商品熟悉">商品熟悉
-					<!-- <div class="color-list">
-							<div class="color-item"
-									v-for="color in colors" v-dragging="{ item: color, list: colors, group: 'color' }"
-									:key="color.text"
-							>{{color.text}}</div>
-					</div> -->
+        <el-tab-pane label="商品属性">
+					<el-form label-width="80px" size="medium">
+						<el-form-item label="商品类型">
+							<el-select :value="shopType" placeholder="请选择" @change="vModel('shopType', $event)">
+								<el-option label="区域一" value="1"></el-option>
+								<el-option label="区域二" value="2"></el-option>
+							</el-select>
+						</el-form-item>
+					</el-form>
+					<el-card class="box-card">
+						<div slot="header" class="clearfix">
+							<span>商品属性</span>
+						</div>
+						<div class="text item">
+							<el-form label-width="80px" size="medium">
+								<el-form-item label="手机型号">
+									<el-input placeholder="请输入手机型号" style="width: 400px;"
+									:value="shopAttrs.phone" @input="vModelShopAttrs({key: 'phone', val: $event})"></el-input>
+								</el-form-item>
+								<!-- <el-form-item label="单选框">
+									<el-radio-group v-model="radio" size="medium">
+										<el-radio label="1" border>备选项1</el-radio>
+										<el-radio label="2" border>备选项2</el-radio>
+									</el-radio-group>
+								</el-form-item>
+								<el-form-item label="多选框">
+									<el-checkbox-group v-model="checkboxGroup" size="medium">
+										<el-checkbox label="1" border></el-checkbox>
+										<el-checkbox label="2" border></el-checkbox>
+									</el-checkbox-group>
+								</el-form-item> -->
+							</el-form>
+						</div>
+					</el-card>
 				</el-tab-pane>
         <el-tab-pane label="媒体设置">
 					<el-form label-width="80">
@@ -63,13 +90,18 @@
 				</el-tab-pane>
         <el-tab-pane label="商品详情">
 					<!-- 富文本编辑器 -->
-					<tinymce
-						ref="editor"
-						v-model="msg"
-						@onClick="onClick"
-					/>
+					<tinymce ref="editor" v-model="msg" @onClick="onClick" />
 				</el-tab-pane>
-        <el-tab-pane label="折扣设置">折扣设置</el-tab-pane>
+        <el-tab-pane label="折扣设置">
+					<el-form label-width="80px">
+						<el-form-item label="会员价" size="medium">
+							<el-input :value="discount" style="width: 300px;"
+							@input="vModel('discount', $event)">
+								<template slot="append">%</template>
+							</el-input>
+						</el-form-item>
+					</el-form>
+				</el-tab-pane>
       </el-tabs>
     </div>
   </div>
@@ -87,30 +119,20 @@ export default {
 	components: { baseSet, simpleAttrs, manyAttrs, tinymce },
   data() {
     return {
-      tabIndex: '3',
-			/* colors: [
-				{ text: "Aquamarine" }, 
-				{ text: "Hotpink" },
-				{ text: "Gold" }, 
-				{ text: "Crimson" }, 
-				{ text: "Blueviolet" }, 
-				{ text: "Lightblue" }, 
-				{ text: "Cornflowerblue" }, 
-				{ text: "Skyblue" }, 
-				{ text: "Burlywood" }
-			], */
+      tabIndex: '2',
+			select: '',
+			radio: '1',
+			checkboxGroup: [],
 			//富文本msh
 			msg: 'Welcome to Use Tinymce Editor',
     };
   },
   computed: {
-		...mapState('goods_create', ['skus_type', 'shopPics'])
+		...mapState('goods_create', ['skus_type', 'shopType', 'shopAttrs', 'shopPics', 'discount'])
   },
-	created(){
-		console.log(this.shopPics)
-	},
+	created(){ },
   methods: {
-		...mapMutations('goods_create', ['vModelState']),
+		...mapMutations('goods_create', ['vModelState', 'vModelShopAttrs']),
 		//修改表单的值
 		vModel(key, val){
 			this.vModelState({key, val});
@@ -152,6 +174,9 @@ export default {
 			})
 			.catch(e => e)
 		},
+		chooseShopType(val){
+			console.log(val)
+		},
 		// 富文本点击事件
 		onClick (e, editor) {
 			console.log('Element clicked')
@@ -163,6 +188,11 @@ export default {
 </script>
 
 <style scoped>
+.el-card__header{
+	padding: 10px 20px;
+	background-color: #C0C4CC;
+}
+
 .goods_create .el-form-item {
   margin-bottom: 10px;
 }
