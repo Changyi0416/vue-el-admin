@@ -64,7 +64,7 @@
               </template>
             </el-table-column>
             <el-table-column label="实付款" prop="type" align="center">
-              <template slot-scope="scope">
+              <template>
                 ￥10<br/>
                 <span>（含运费：￥0.00）</span>
               </template>
@@ -75,20 +75,20 @@
             </el-table-column>
             <el-table-column label="商品排序" prop="order" align="center"></el-table-column>
             <el-table-column label="商品状态" prop="status" align="center" width="120">
-              <template slot-scope="scope">
+              <template>
 							  <el-tag type="success">微信支付</el-tag>
               </template>
             </el-table-column>
             <el-table-column label="配送方式" prop="stock" align="center"></el-table-column>
             <el-table-column label="交易状态）" align="center">
-              <template slot-scope="scope">
+              <template>
                 <div>付款状态：<el-tag type="success">已付款</el-tag></div>
                 <div class="my-2">发货状态：<el-tag type="info">待发货</el-tag></div>
                 <div>收货状态：<el-tag type="info">待收货</el-tag></div>
               </template>
             </el-table-column>
             <el-table-column label="操作" width="140">
-              <template slot-scope="scope">
+              <template>
                 <el-button type="success" size="mini">订单详情</el-button>
               </template>
             </el-table-column>
