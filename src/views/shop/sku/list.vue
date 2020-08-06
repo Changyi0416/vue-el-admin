@@ -1,8 +1,8 @@
 <template>
 	<div>
 		<div class="mb-2">
-			<el-button class="btn" size="medium" type="success" @click="addSku">添加规格</el-button>
-			<el-button class="btn" size="medium" type="danger" @click="deleteMore">批量删除</el-button>
+			<el-button size="medium" type="success" @click="addSku">添加规格</el-button>
+			<el-button size="medium" type="danger" @click="deleteMore">批量删除</el-button>
 		</div>
 		<el-table :data="tableData" style="width: 100%" border @selection-change="selectChange">
 		  <el-table-column type="selection" fixed="left" align="center"></el-table-column>
@@ -11,7 +11,7 @@
 		  <el-table-column label="商品排序" prop="order" align="center"></el-table-column>
 		  <el-table-column label="状态" align="center" width="140">
 		    <template slot-scope="scope">
-		      <el-button class="btn mb-1" plain size="mini"
+		      <el-button class="mb-1" plain size="mini"
 					:type="scope.row.status ? 'success' : 'danger'"
 					@click="changeStatus(scope.row)">
 						{{scope.row.status ? '启用' : '禁用'}}
@@ -22,9 +22,9 @@
 		  <el-table-column label="操作" width="160">
 		    <template slot-scope="scope">
 		      <el-button-group>
-		        <el-button class="btn" type="success" plain size="medium"
+		        <el-button type="success" plain size="medium"
 						@click="edit(scope.row, scope.$index)">编辑</el-button>
-		        <el-button class="btn" type="danger" plain size="medium" 
+		        <el-button type="danger" plain size="medium" 
 						@click="deleteItem(scope.$index)">删除</el-button>
 		      </el-button-group>
 		    </template>

@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<el-button class="py-2 btn" type="primary" @click="create" size="mini">创建顶级分类</el-button>
+		<el-button class="py-2" type="primary" @click="create" size="mini">创建顶级分类</el-button>
 		<el-tree ref="tree" :data="data" :props="defaultProps" 
 		:default-expand-all="true"
 		:expand-on-click-node="false"
@@ -13,15 +13,15 @@
 					<span v-else>{{ data.label }}</span>
 				</div>
 				<span>
-					<el-button class="btn" plain size="mini" :type="data.status ? 'success' : 'warning'"
+					<el-button plain size="mini" :type="data.status ? 'success' : 'warning'"
 					@click.stop="isShow(data)">{{ data.status ? '显示' : '隐藏' }}</el-button>
-					<el-button class="btn" type="success" size="mini" 
+					<el-button type="success" size="mini" 
 					@click.stop="append(data)">增加</el-button>
-					<el-button class="btn" :type="data.editStatus ? '' : 'warning'" size="mini" 
+					<el-button :type="data.editStatus ? '' : 'warning'" size="mini" 
 					@click.stop="edit(data)">
 						{{data.editStatus ? '完成' : '修改'}}
 					</el-button>
-					<el-button class="btn" type="danger" size="mini" 
+					<el-button type="danger" size="mini" 
 					@click.stop="remove(node, data)">删除</el-button>
 				</span>
 			</span>

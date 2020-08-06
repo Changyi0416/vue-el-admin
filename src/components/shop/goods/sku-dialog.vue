@@ -18,7 +18,7 @@
         </el-aside>
         <el-container>
 					<el-header style="margin-left: 180px;">
-						<el-button class="btn" type="primary" size="mini" @click="doChooseAll">{{isChooseAll ? '取消全选' : '全选'}}</el-button>
+						<el-button type="primary" size="mini" @click="doChooseAll">{{isChooseAll ? '取消全选' : '全选'}}</el-button>
 					</el-header>
           <!-- 主内容 -->
           <el-main class="position-absolute" style="top: 20px; left:180px; right: 0; bottom: 0;">
