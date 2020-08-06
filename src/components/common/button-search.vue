@@ -11,7 +11,7 @@
 					<div class="d-flex align-items-center">
 						<el-input type="text" v-model="keyword" size="mini" :placeholder="placeholder" class="mr-2" style="width: 150px;"></el-input>
 						<el-button size="mini" type="info" @click="$emit('search', keyword)">搜索</el-button>
-						<el-button size="mini" @click="searchSeniorShow = true">高级搜索</el-button>
+						<el-button size="small" @click="searchSeniorShow = true">高级搜索</el-button>
 					</div>
 				</slot>
 			</div>

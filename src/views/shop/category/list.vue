@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<el-button class="py-2" type="primary" @click="create" size="mini">创建顶级分类</el-button>
+		<el-button class="py-2" type="primary" @click="create" size="medium">创建顶级分类</el-button>
 		<el-tree ref="tree" :data="data" :props="defaultProps" 
 		:default-expand-all="true"
 		:expand-on-click-node="false"

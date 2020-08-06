@@ -58,6 +58,11 @@ export default {
             name: "商品类型",
             pathname: 'shop_type_list'
           },
+					{
+            icon: "el-icon-coffee",
+            name: "商品评论",
+            pathname: 'shop_comment_list'
+          },
         ]
       },
       {
@@ -65,14 +70,19 @@ export default {
         asideActiveIndex: "0",
         asideList: [
           {
-            icon: "el-icon-s-home",
-            name: "首页",
-            pathname: ''
+            icon: "el-icon-s-order",
+            name: "订单管理",
+            pathname: 'order_order_list'
           },
           {
-            icon: "el-icon-s-grid",
-            name: "商品规格",
-            pathname: ''
+            icon: "el-icon-s-check",
+            name: "发票管理",
+            pathname: 'order_invoice_list'
+          },
+          {
+            icon: "el-icon-s-opportunity",
+            name: "售后服务",
+            pathname: 'order_after-sale_list'
           }
         ]
       },
