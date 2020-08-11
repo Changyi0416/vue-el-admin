@@ -86,7 +86,21 @@ export default {
           }
         ]
       },
-      { name: "会员" },
+      { name: "会员",
+        asideActiveIndex: "0",
+        asideList: [
+          {
+            icon: "el-icon-user",
+            name: "会员列表",
+            pathname: 'user_list'
+          },
+          {
+            icon: "el-icon-s-data",
+            name: "会员等级",
+            pathname: 'user_level'
+          },
+        ]
+      },
       { name: "设置" }
     ]
   }

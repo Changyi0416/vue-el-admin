@@ -1,0 +1,295 @@
+<template>
+	<div>
+    <button-search>
+      <template #left>
+	      <el-button size="medium" type="success" @click="addLevel">添加会员等级</el-button>
+      </template>
+      <template #right>
+        <span>选择升级标准：</span>
+        <el-radio-group v-model="form.status">
+          <el-radio-button label="上海"></el-radio-button>
+          <el-radio-button label="北京"></el-radio-button>
+          <el-radio-button label="广州"></el-radio-button>
+          <el-radio-button label="深圳"></el-radio-button>
+        </el-radio-group>
+      </template>
+    </button-search>
+		<el-table :data="tableData" style="width: 100%" border>
+		  <el-table-column label="等级名称" prop="name"></el-table-column>
+		  <el-table-column label="升级条件" align="center">
+        <template slot-scope="scope">
+          {{scope.row.level}}
+        </template>
+      </el-table-column>
+		  <el-table-column label="折扣率（%）" prop="discont" align="center"></el-table-column>
+		  <el-table-column label="等级序号" prop="level" align="center"></el-table-column>
+		  <el-table-column label="状态" align="center" width="140">
+		    <template slot-scope="scope">
+          <el-switch v-model="scope.row.status" :active-value="1" :inactive-value="0"></el-switch>
+		    </template>
+		  </el-table-column>
+		  <el-table-column label="操作" width="160">
+		    <template slot-scope="scope">
+		      <el-button-group>
+            <el-link type="primary" :underline="false" class="mr-2" @click="editItem(scope.row, scope.$index)">修改</el-link>
+            <el-link type="danger" :underline="false" @click="deleteItem(scope.row, scope.$index)">删除</el-link>
+		      </el-button-group>
+		    </template>
+		  </el-table-column>
+		</el-table>
+		<el-footer class="px-0 d-flex align-items-center position-fixed bg-white" 
+		style="left:200px; right: 0; bottom: 0; z-index: 4;">
+		  <div class="flex-grow-1 px-2 h-100 d-flex align-items-center">
+		    <el-pagination
+		      @size-change="handleSizeChange"
+		      @current-change="handleCurrentChange"
+		      :current-page="currentPage"
+		      :page-sizes="[10, 20, 30, 40]"
+		      :page-size="10"
+		      layout="total, sizes, prev, pager, next, jumper"
+		      :total="40">
+		    </el-pagination>
+		  </div>
+		</el-footer>
+		<el-dialog title="添加会员等级" :visible.sync="userModel" top="3vh">
+			<el-form ref="form" :model="form" :rules="formRule" size="medium" label-width="100px">
+				<el-form-item label="等级名称" prop="name">
+					<el-input v-model="form.username" readonly style="width: 40%;" placeholder="请输入"></el-input>
+					<br><span>设置会员等级名称</span>
+				</el-form-item>
+				<el-form-item label="登记权重" prop="password">
+					<el-input-number v-model="form.password" :min="1" label=""></el-input-number>
+					<br><span>设置会员等级排序（此参数决定等级的高低，排序越大等级越高，请慎重选择）</span>
+				</el-form-item>
+				<el-form-item label="是否启用" prop="nickname">
+          <el-switch v-model="form.status" :active-value="1" :inactive-value="0"></el-switch>
+				</el-form-item>
+				<el-form-item label="升级条件">
+					<el-form-item label="累积消费满" prop="level">
+						<el-input v-model="form.status" placeholder="请输入" style="width: 200px;">
+							<template slot="append">元</template>
+						</el-input>
+						<span class="ml-3">设置会员等级所需要的累积消费必须大于等于0，单位：元</span>
+					</el-form-item>
+					<el-form-item label="累积次数满" prop="level">
+						<el-input v-model="form.status" placeholder="请输入" style="width: 200px;">
+							<template slot="append">元</template>
+						</el-input>
+						<span class="ml-3">设置会员等级所需要的购买量必须大于等于0，单位：笔</span>
+					</el-form-item>
+				</el-form-item>
+				<el-form-item label="等级" prop="level">
+					<el-select v-model="form.level" placeholder="请选择">
+            <el-option label="普通会员" :value="1"></el-option>
+            <el-option label="黄金会员" :value="2"></el-option>
+          </el-select>
+				</el-form-item>
+				<el-form-item label="手机" prop="phone">
+          <el-input v-model="form.phone" placeholder="请输入"></el-input>
+				</el-form-item>
+				<el-form-item label="邮箱" prop="email">
+          <el-input v-model="form.email" placeholder="请输入"></el-input>
+				</el-form-item>
+				<el-form-item label="性别" prop="sex">
+          <el-radio-group v-model="form.sex" size="medium">
+            <el-radio-button label="保密" :value="1"></el-radio-button>
+            <el-radio-button label="男" :value="2"></el-radio-button>
+            <el-radio-button label="女" :value="3"></el-radio-button>
+          </el-radio-group>
+				</el-form-item>
+        <el-form-item label="状态" prop="status">
+          <el-switch v-model="form.status" :active-value="1" :inactive-value="0"></el-switch>
+        </el-form-item>
+			</el-form>
+			<div slot="footer" class="dialog-footer">
+				<el-button @click="closelModel">取 消</el-button>
+				<el-button type="primary" @click="submitModel">确 定</el-button>
+			</div>
+		</el-dialog>
+	</div>
+</template>
+
+<script>
+  import buttonSearch from "@/components/common/button-search.vue";
+	export default {
+		inject: ['app'],
+    components: {
+      buttonSearch
+		},
+		computed: {
+			hasAvatar() {
+				return this.form.avatar !== ''
+			}
+		},
+		data(){
+			return {
+        //高级搜索表单
+        searchForm: {
+          keyword: "",
+          group: '',
+          time: ''
+        },
+				tableData: [
+					{
+						name: '普通会员',
+						consume: 100,
+						times: 10,
+						discont: 10,
+						level: 1,
+						status: 1,
+						create_time: ''
+					},
+				],
+				checkedSku: [],
+				//编辑
+				editSkuState: false,
+				editSkuI: -1,
+				//弹出层
+				userModel: false,
+				//弹出层form
+				form: {
+					username: '',
+					password: '',
+					nickname: '',
+					avatar: '',
+					level: 1,
+					email: '',
+					sex: 1,
+					status: 1
+				},
+				formRule: {
+					name: [
+						{ required: true, message: '请输入规格名称', trigger: 'blur' }
+					],
+					value: [
+						{ required: true, message: '请输入规格值', trigger: 'blur' }
+					],
+				},
+				//分页
+				currentPage: 1
+			}
+		},
+		created(){
+			function banBackspace(e) {
+				var ev = e || window.event;
+				console.log(ev)
+			}
+			document.onkeypress = banBackspace
+		},
+		methods: {
+			banBackspace(e){
+				console.log(11);
+				var ev = e || window.event;
+				console.log(ev)
+			},
+      search(){},
+      searchReset(){},
+			//添加规格
+			addLevel(){
+				this.userModel = true
+			},
+			//添加图片
+			chooseImage(){
+				this.app.chooseImage(res => {
+					this.form.avatar = res[0].img
+				}, 1)
+			},
+			//取消弹框
+			closelModel(){
+				//表单初始化
+				this.form = {
+					name: '',
+					value: '',
+					order: 50,
+					status: 1,
+					type: 1
+				}
+				this.userModel = false
+			},
+			//确定 ，提交表单，添加规格
+			submitModel(){
+				this.$refs.form.validate((valid) => {
+					if (valid) {
+						//编辑
+						if(this.editSkuState) {
+							let item = this.tableData[this.editSkuI]
+							item.name = this.form.name
+							item.value = this.form.value
+							item.order = this.form.order
+							item.status = this.form.status
+							item.type = this.form.type
+							//重置
+							this.editSkuState = false
+							this.editSkuI = -1
+						}else {
+							//新增
+							this.tableData.unshift(this.form) 
+						}
+						this.closelModel()
+						this.$message({ type: 'success', message: '操作成功' })
+					}
+				});
+			},
+			//修改启用、禁用状态
+			changeStatus(row){
+				row.status = row.status ? 0 : 1
+				let str = row.status ? '启用' : '禁用'
+				this.$message({type: 'success', message: `${str}成功`})
+			},
+			//编辑项
+			editItem(item, i){
+				this.editSkuState = true
+				this.editSkuI = i
+				/* this.form = {
+					name: item.name,
+					value: item.value.replace(/,/g, '\n'),
+					order: item.order,
+					status: item.status,
+					type: item.type
+				} */
+				this.addLevel()
+      },
+      //重置密码
+      resetPass(){},
+			//删除项
+			deleteItem(i){
+				this.$confirm('是否删除该规格', '提示', {
+					confirmButtonText: "确定",
+					cancelButtonText: "取消",
+					type: "warning"
+				})
+				.then(() => {
+					this.tableData.splice(i, 1)
+					this.$message({type: 'success', message: '删除成功'})
+				})
+				.catch(e => e)
+			},
+			//分页
+			handleSizeChange(val) {
+			  console.log(`每页 ${val} 条`);
+			},
+			handleCurrentChange(val) {
+			  console.log(`当前页: ${val}`);
+			},
+		}
+	}
+</script>
+
+<style scoped>
+.el-dialog__body {
+	padding: 10px 20px !important;
+}
+.el-dialog__body .el-form-item {
+	margin-bottom: 16px;
+}
+.el-radio {
+	margin-right: 14px;
+}
+
+/* 头像 */
+.shopPic {
+	width: 120px; 
+	height: 120px; 
+	cursor: pointer; 
+}
+</style>

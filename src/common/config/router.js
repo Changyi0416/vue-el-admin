@@ -60,6 +60,14 @@ let routes = [
 			{
         meta: { title: '售后服务' },
         component: 'order/after-sale/list'
+      },
+			{
+        meta: { title: '会员列表' },
+        component: 'user/list'
+      },
+			{
+        meta: { title: '会员等级' },
+        component: 'user/level'
       }
     ]
   },
