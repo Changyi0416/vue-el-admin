@@ -5,12 +5,10 @@
 	      <el-button size="medium" type="success" @click="addLevel">添加会员等级</el-button>
       </template>
       <template #right>
-        <span>选择升级标准：</span>
-        <el-radio-group v-model="form.status">
-          <el-radio-button label="上海"></el-radio-button>
-          <el-radio-button label="北京"></el-radio-button>
-          <el-radio-button label="广州"></el-radio-button>
-          <el-radio-button label="深圳"></el-radio-button>
+        <span class="mr-1" style="font-size: 14px;">选择升级标准：</span>
+        <el-radio-group v-model="level" size="small">
+          <el-radio-button :label="0">累计消费</el-radio-button>
+          <el-radio-button :label="1">累计次数</el-radio-button>
         </el-radio-group>
       </template>
     </button-search>
@@ -18,7 +16,7 @@
 		  <el-table-column label="等级名称" prop="name"></el-table-column>
 		  <el-table-column label="升级条件" align="center">
         <template slot-scope="scope">
-          {{scope.row.level}}
+          {{ getLevel.name + '：' + scope.row[getLevel.value] + getLevel.unit }}
         </template>
       </el-table-column>
 		  <el-table-column label="折扣率（%）" prop="discont" align="center"></el-table-column>
@@ -30,10 +28,8 @@
 		  </el-table-column>
 		  <el-table-column label="操作" width="160">
 		    <template slot-scope="scope">
-		      <el-button-group>
-            <el-link type="primary" :underline="false" class="mr-2" @click="editItem(scope.row, scope.$index)">修改</el-link>
-            <el-link type="danger" :underline="false" @click="deleteItem(scope.row, scope.$index)">删除</el-link>
-		      </el-button-group>
+					<el-link type="primary" :underline="false" class="mr-2" @click="editItem(scope.row, scope.$index)">修改</el-link>
+					<el-link type="danger" :underline="false" @click="deleteItem(scope.row, scope.$index)">删除</el-link>
 		    </template>
 		  </el-table-column>
 		</el-table>
@@ -54,52 +50,36 @@
 		<el-dialog title="添加会员等级" :visible.sync="userModel" top="3vh">
 			<el-form ref="form" :model="form" :rules="formRule" size="medium" label-width="100px">
 				<el-form-item label="等级名称" prop="name">
-					<el-input v-model="form.username" readonly style="width: 40%;" placeholder="请输入"></el-input>
-					<br><span>设置会员等级名称</span>
+					<el-input v-model="form.name" style="width: 40%;" placeholder="请输入"></el-input>
+					<small class="ml-3 text-secondary">设置会员等级名称</small>
 				</el-form-item>
-				<el-form-item label="登记权重" prop="password">
-					<el-input-number v-model="form.password" :min="1" label=""></el-input-number>
-					<br><span>设置会员等级排序（此参数决定等级的高低，排序越大等级越高，请慎重选择）</span>
+				<el-form-item label="登记权重" prop="level">
+					<el-input-number v-model="form.level" :min="1" label=""></el-input-number>
+					<br><small class="text-secondary">设置会员等级排序（此参数决定等级的高低，排序越大等级越高，请慎重选择）</small>
 				</el-form-item>
-				<el-form-item label="是否启用" prop="nickname">
+				<el-form-item label="是否启用" prop="status">
           <el-switch v-model="form.status" :active-value="1" :inactive-value="0"></el-switch>
 				</el-form-item>
 				<el-form-item label="升级条件">
-					<el-form-item label="累积消费满" prop="level">
-						<el-input v-model="form.status" placeholder="请输入" style="width: 200px;">
+					<el-form-item label="累积消费满" prop="consume">
+						<el-input type="number" v-model="form.consume" placeholder="请输入" style="width: 180px;">
 							<template slot="append">元</template>
 						</el-input>
-						<span class="ml-3">设置会员等级所需要的累积消费必须大于等于0，单位：元</span>
+						<small class="ml-3 text-secondary">设置会员等级所需要的累积消费必须大于等于0，单位：元</small>
 					</el-form-item>
-					<el-form-item label="累积次数满" prop="level">
-						<el-input v-model="form.status" placeholder="请输入" style="width: 200px;">
-							<template slot="append">元</template>
+					<el-form-item label="累积次数满" prop="times">
+						<el-input type="number" v-model="form.times" placeholder="请输入" style="width: 180px;">
+							<template slot="append">笔</template>
 						</el-input>
-						<span class="ml-3">设置会员等级所需要的购买量必须大于等于0，单位：笔</span>
+						<small class="ml-3 text-secondary">设置会员等级所需要的购买量必须大于等于0，单位：笔</small>
 					</el-form-item>
 				</el-form-item>
-				<el-form-item label="等级" prop="level">
-					<el-select v-model="form.level" placeholder="请选择">
-            <el-option label="普通会员" :value="1"></el-option>
-            <el-option label="黄金会员" :value="2"></el-option>
-          </el-select>
+				<el-form-item label="折扣率" prop="discont">
+          <el-input type="number" v-model="form.discont" style="width: 180px;" placeholder="请输入">
+						<template slot="append">%</template>
+					</el-input>
+					<br><small class="text-secondary">折扣率单位为百分比，如输入90，表示该会员等级的用户可以以商品原价的90%购买</small>
 				</el-form-item>
-				<el-form-item label="手机" prop="phone">
-          <el-input v-model="form.phone" placeholder="请输入"></el-input>
-				</el-form-item>
-				<el-form-item label="邮箱" prop="email">
-          <el-input v-model="form.email" placeholder="请输入"></el-input>
-				</el-form-item>
-				<el-form-item label="性别" prop="sex">
-          <el-radio-group v-model="form.sex" size="medium">
-            <el-radio-button label="保密" :value="1"></el-radio-button>
-            <el-radio-button label="男" :value="2"></el-radio-button>
-            <el-radio-button label="女" :value="3"></el-radio-button>
-          </el-radio-group>
-				</el-form-item>
-        <el-form-item label="状态" prop="status">
-          <el-switch v-model="form.status" :active-value="1" :inactive-value="0"></el-switch>
-        </el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
 				<el-button @click="closelModel">取 消</el-button>
@@ -123,12 +103,7 @@
 		},
 		data(){
 			return {
-        //高级搜索表单
-        searchForm: {
-          keyword: "",
-          group: '',
-          time: ''
-        },
+				level: 0,
 				tableData: [
 					{
 						name: '普通会员',
@@ -136,7 +111,7 @@
 						times: 10,
 						discont: 10,
 						level: 1,
-						status: 1,
+						status: 1, //启用
 						create_time: ''
 					},
 				],
@@ -148,63 +123,47 @@
 				userModel: false,
 				//弹出层form
 				form: {
-					username: '',
-					password: '',
-					nickname: '',
-					avatar: '',
+					name: '',
+					consume: '',
+					times: '',
+					discont: '',
 					level: 1,
-					email: '',
-					sex: 1,
 					status: 1
 				},
 				formRule: {
-					name: [
-						{ required: true, message: '请输入规格名称', trigger: 'blur' }
-					],
-					value: [
-						{ required: true, message: '请输入规格值', trigger: 'blur' }
-					],
+					name: [{ required: true, message: '请输入规格名称', trigger: 'blur' }]
 				},
 				//分页
 				currentPage: 1
 			}
 		},
-		created(){
-			function banBackspace(e) {
-				var ev = e || window.event;
-				console.log(ev)
+		computed: {
+			getLevel(){
+				let arr = [
+					{ name: '累计消费', value: 'consume', unit: '元' },
+					{ name: '累计次数', value: 'times', unit: '笔' }
+				]
+				return arr[this.level]
 			}
-			document.onkeypress = banBackspace
 		},
 		methods: {
-			banBackspace(e){
-				console.log(11);
-				var ev = e || window.event;
-				console.log(ev)
-			},
-      search(){},
-      searchReset(){},
 			//添加规格
 			addLevel(){
 				this.userModel = true
-			},
-			//添加图片
-			chooseImage(){
-				this.app.chooseImage(res => {
-					this.form.avatar = res[0].img
-				}, 1)
+
 			},
 			//取消弹框
 			closelModel(){
+				this.userModel = false
 				//表单初始化
 				this.form = {
 					name: '',
-					value: '',
-					order: 50,
-					status: 1,
-					type: 1
+					consume: '',
+					times: '',
+					discont: '',
+					level: 1,
+					status: 1
 				}
-				this.userModel = false
 			},
 			//确定 ，提交表单，添加规格
 			submitModel(){
@@ -214,10 +173,11 @@
 						if(this.editSkuState) {
 							let item = this.tableData[this.editSkuI]
 							item.name = this.form.name
-							item.value = this.form.value
-							item.order = this.form.order
+							item.consume = this.form.consume
+							item.times = this.form.times
+							item.discont = this.form.discont
+							item.level = this.form.level
 							item.status = this.form.status
-							item.type = this.form.type
 							//重置
 							this.editSkuState = false
 							this.editSkuI = -1
@@ -240,13 +200,15 @@
 			editItem(item, i){
 				this.editSkuState = true
 				this.editSkuI = i
-				/* this.form = {
+				//编辑-给form表单复制
+				this.form = {
 					name: item.name,
-					value: item.value.replace(/,/g, '\n'),
-					order: item.order,
-					status: item.status,
-					type: item.type
-				} */
+					consume: item.consume,
+					times: item.times,
+					discont: item.discont,
+					level: item.level,
+					status: item.status
+				} 
 				this.addLevel()
       },
       //重置密码

@@ -101,7 +101,21 @@ export default {
           },
         ]
       },
-      { name: "设置" }
+      { name: "设置",
+        asideActiveIndex: "0",
+        asideList: [
+          {
+            icon: "el-icon-user",
+            name: "基础设置",
+            pathname: 'set_base'
+          },
+          {
+            icon: "el-icon-setting",
+            name: "物流设置",
+            pathname: 'set_express'
+          },
+        ] 
+      }
     ]
   }
 }

@@ -49,7 +49,7 @@
       </el-table-column>
 		  <el-table-column label="会员等级" align="center">
         <template slot-scope="scope">
-          {{scope.row.level.name}}
+          {{['', '普通会员', '黄金会员'][scope.row.level]}}
         </template>
       </el-table-column>
 		  <el-table-column label="注册/登录" align="center">
@@ -90,13 +90,13 @@
 		<el-dialog title="添加会员" :visible.sync="userModel" top="3vh">
 			<el-form ref="form" :model="form" :rules="formRule" size="medium" label-width="80px">
 				<el-form-item label="用户名" prop="username">
-					<el-input v-model="form.username" style="width: 40%;" placeholder="请输入"></el-input>
+					<el-input v-model="form.username" style="width: 80%;" placeholder="请输入"></el-input>
 				</el-form-item>
 				<el-form-item label="密码" prop="password">
-					<el-input type="password" v-model="form.password" style="width: 40%;" placeholder="请输入"></el-input>
+					<el-input type="password" v-model="form.password" style="width: 80%;" placeholder="请输入"></el-input>
 				</el-form-item>
 				<el-form-item label="昵称" prop="nickname">
-					<el-input v-model="form.nickname" style="width: 40%;" placeholder="请输入"></el-input>
+					<el-input v-model="form.nickname" style="width: 80%;" placeholder="请输入"></el-input>
 				</el-form-item>
 				<el-form-item label="头像">
           <div class="rounded d-flex align-items-center justify-content-center mr-3 mb-3 shopPic"
@@ -113,16 +113,16 @@
           </el-select>
 				</el-form-item>
 				<el-form-item label="手机" prop="phone">
-          <el-input v-model="form.phone" placeholder="请输入"></el-input>
+          <el-input type="number" v-model="form.phone" :maxlength="11" style="width: 80%;" placeholder="请输入"></el-input>
 				</el-form-item>
 				<el-form-item label="邮箱" prop="email">
-          <el-input v-model="form.email" placeholder="请输入"></el-input>
+          <el-input v-model="form.email" style="width: 80%;" placeholder="请输入"></el-input>
 				</el-form-item>
 				<el-form-item label="性别" prop="sex">
           <el-radio-group v-model="form.sex" size="medium">
-            <el-radio-button label="保密" :value="1"></el-radio-button>
-            <el-radio-button label="男" :value="2"></el-radio-button>
-            <el-radio-button label="女" :value="3"></el-radio-button>
+            <el-radio-button :label="1">保密</el-radio-button>
+            <el-radio-button :label="2">男</el-radio-button>
+            <el-radio-button :label="3">女</el-radio-button>
           </el-radio-group>
 				</el-form-item>
         <el-form-item label="状态" prop="status">
@@ -163,11 +163,7 @@
             username: '用户名',
             userid: 546456547556,
             avatar: 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
-            level_id: 1,
-            level: {
-              id: 1,
-              name: '普通会员'
-            },
+            level: 1,
             create_time: '2019-07-24 13:00:00',
             update_time: '2019-07-24 13:00:00',
 						status: 1
@@ -185,7 +181,8 @@
 					password: '',
 					nickname: '',
 					avatar: '',
-					level: 1,
+					level: '',
+					phone: '',
 					email: '',
 					sex: 1,
 					status: 1
@@ -219,11 +216,15 @@
 			closelModel(){
 				//表单初始化
 				this.form = {
-					name: '',
-					value: '',
-					order: 50,
-					status: 1,
-					type: 1
+					username: '',
+					password: '',
+					nickname: '',
+					avatar: '',
+					level: '',
+					phone: '',
+					email: '',
+					sex: 1,
+					status: 1
 				}
 				this.userModel = false
 			},
@@ -234,11 +235,15 @@
 						//编辑
 						if(this.editSkuState) {
 							let item = this.tableData[this.editSkuI]
-							item.name = this.form.name
-							item.value = this.form.value
-							item.order = this.form.order
+							item.username = this.form.username
+							item.password = this.form.password
+							item.nickname = this.form.nickname
+							item.avatar = this.form.avatar
+							item.level = this.form.level
+							item.phone = this.form.phone
+							item.email = this.form.email
+							item.sex = this.form.sex
 							item.status = this.form.status
-							item.type = this.form.type
 							//重置
 							this.editSkuState = false
 							this.editSkuI = -1
@@ -261,13 +266,18 @@
 			editItem(item, i){
 				this.editSkuState = true
 				this.editSkuI = i
-				/* this.form = {
-					name: item.name,
-					value: item.value.replace(/,/g, '\n'),
-					order: item.order,
+				//编辑-给form表单复制
+				this.form = {
+					username: item.username,
+					password: item.password,
+					nickname: item.nickname,
+					avatar: item.avatar,
+					level: item.level,
+					phone: item.phone,
+					email: item.email,
+					sex: item.sex,
 					status: item.status,
-					type: item.type
-				} */
+				} 
 				this.addUser()
       },
       //重置密码
