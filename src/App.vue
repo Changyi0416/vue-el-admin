@@ -25,6 +25,10 @@ export default {
 			maxNum: 1
 		}
 	},
+	created(){
+		//初始化用户信息
+		this.$store.commit('initUser');
+	},
   methods: {
 		//打开相册弹出层
 		chooseImage(callback, maxNum){

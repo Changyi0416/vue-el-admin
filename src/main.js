@@ -16,6 +16,20 @@ import store from './store'
 //引入logo等项目信息的配置文件
 import $conf from './common/config/config.js'
 
+import { Message } from 'element-ui'
+// 添加响应拦截器
+axios.interceptors.response.use((res) => {
+	// 对响应数据做点什么
+	return res;
+}, function (err) {
+	//失败处理（提示）
+	let fail = err.response
+	if(fail && fail.data && fail.data.errorCode){
+		Message.error(fail.data.msg);
+	} 
+	return Promise.reject(err);
+});
+
 Vue.prototype.$conf = $conf;
 
 Vue.config.productionTip = false
