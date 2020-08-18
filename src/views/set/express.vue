@@ -26,13 +26,13 @@
         </el-table>
       </el-tab-pane>
       <el-tab-pane label="物流跟踪" name="1">
-        <el-form :model="form" ref="from" label-width="140px" size="small">
+        <el-form :model="form" ref="from" label-width="100px" size="small">
           <el-form-item label="快递100 Customer">
             <el-input v-model="form.customer" placeholder="请输入"></el-input>
-            <br><el-link type="info" :underline="false">用于查询物流信息，</el-link><el-link type="primary" :underline="false">快递100申请</el-link>
           </el-form-item>
-          <el-form-item label="快递100 Key">
+          <el-form-item label="空间域名">
             <el-input v-model="form.key" placeholder="请输入"></el-input>
+            <br><small class="text-secondary">请补全http://或https://</small>
           </el-form-item>
           <el-form-item>
             <el-button type="primary" @click="onSubmit">保存</el-button>

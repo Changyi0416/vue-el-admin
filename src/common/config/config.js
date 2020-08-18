@@ -105,7 +105,7 @@ export default {
         asideActiveIndex: "0",
         asideList: [
           {
-            icon: "el-icon-setting",
+            icon: "el-icon-user",
             name: "基础设置",
             pathname: 'set_base'
           },
@@ -125,7 +125,5 @@ export default {
             pathname: 'set_payment'
           },
         ] 
-      }
-    ]
   }
 }
