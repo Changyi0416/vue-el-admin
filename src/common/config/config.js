@@ -86,8 +86,46 @@ export default {
           }
         ]
       },
-      { name: "会员" },
-      { name: "设置" }
+      { name: "会员",
+        asideActiveIndex: "0",
+        asideList: [
+          {
+            icon: "el-icon-user",
+            name: "会员列表",
+            pathname: 'user_list'
+          },
+          {
+            icon: "el-icon-s-data",
+            name: "会员等级",
+            pathname: 'user_level'
+          },
+        ]
+      },
+      { name: "设置",
+        asideActiveIndex: "0",
+        asideList: [
+          {
+            icon: "el-icon-setting",
+            name: "基础设置",
+            pathname: 'set_base'
+          },
+          {
+            icon: "el-icon-setting",
+            name: "物流设置",
+            pathname: 'set_express'
+          },
+          {
+            icon: "el-icon-setting",
+            name: "管理员设置",
+            pathname: 'set_manager'
+          },
+          {
+            icon: "el-icon-setting",
+            name: "交易设置",
+            pathname: 'set_payment'
+          },
+        ] 
+      }
     ]
   }
 }

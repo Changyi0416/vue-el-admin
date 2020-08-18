@@ -12,6 +12,7 @@ let routes = [
     component: 'layout',
     redirect: { name: 'index' },
     children: [
+      /* 首页 */
       {
         // path: '/main',
         // name: 'main',
@@ -22,6 +23,7 @@ let routes = [
         meta: { title: '相册管理' },
         component: 'image/index'
       },
+      /* 商品 */
       {
 
         // path: '/shop/goods/list',
@@ -49,6 +51,7 @@ let routes = [
         meta: { title: '商品评价管理' },
         component: 'shop/comment/list'
       },
+      /* 订单 */
 			{
         meta: { title: '订单管理' },
         component: 'order/order/list'
@@ -60,7 +63,33 @@ let routes = [
 			{
         meta: { title: '售后服务' },
         component: 'order/after-sale/list'
-      }
+      },
+      /* 会员 */
+			{
+        meta: { title: '会员列表' },
+        component: 'user/list'
+      },
+			{
+        meta: { title: '会员等级' },
+        component: 'user/level'
+      },
+      /* 设置 */
+			{
+        meta: { title: '基础设置' },
+        component: 'set/base'
+      },
+			{
+        meta: { title: '物流设置' },
+        component: 'set/express'
+      },
+			{
+        meta: { title: '管理员设置' },
+        component: 'set/manager'
+      },
+			{
+        meta: { title: '交易设置' },
+        component: 'set/payment'
+      },
     ]
   },
   {
