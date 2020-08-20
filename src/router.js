@@ -26,11 +26,14 @@ router.beforeEach((to, from, next) => {
 		//权限验证
 		let rules = window.sessionStorage.getItem('rules');
 		rules = rules ? JSON.parse(rules) : []
+		console.log(rules)
+		rules.splice(1,1)
 		let index = rules.findIndex(item => {
 			return item.rule_id && item.desc == to.name
 		})
 		if(index == -1){
-			// return next({name: from.name ? form.name : 'index'})
+			Vue.prototype.$message.error('没有权限')
+			return next({name: from.name ? from.name : 'error_404'})
 		}
 		
 		next()
