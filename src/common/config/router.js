@@ -10,7 +10,7 @@ let routes = [
     path: '/',
     name: 'layout',
     component: 'layout',
-    redirect: { name: 'index' },
+    redirect: { name: 'login' },
     children: [
       /* 首页 */
       {
@@ -67,28 +67,28 @@ let routes = [
       /* 会员 */
 			{
         meta: { title: '会员列表' },
-        component: 'user/list'
+        component: 'user/user-list/list'
       },
 			{
         meta: { title: '会员等级' },
-        component: 'user/level'
+        component: 'user/user-level/list'
       },
       /* 设置 */
 			{
         meta: { title: '基础设置' },
-        component: 'set/base'
+        component: 'set/base/index'
       },
 			{
         meta: { title: '物流设置' },
-        component: 'set/express'
+        component: 'set/express/index'
       },
 			{
         meta: { title: '管理员设置' },
-        component: 'set/manager'
+        component: 'set/manager/index'
       },
 			{
         meta: { title: '交易设置' },
-        component: 'set/payment'
+        component: 'set/payment/index'
       },
     ]
   },

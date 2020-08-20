@@ -27,7 +27,7 @@ export default {
 	},
 	created(){
 		//初始化用户信息
-		this.$store.commit('initUser');
+		this.$store.commit('user/initUser');
 	},
   methods: {
 		//打开相册弹出层

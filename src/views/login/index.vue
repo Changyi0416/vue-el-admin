@@ -25,6 +25,7 @@
 </template>
 
 <script>
+import { mapMutations } from 'vuex'
 export default {
   data() {
     return {
@@ -45,11 +46,16 @@ export default {
         if (!valid) return;
 				this.loading = true
         //提交表单
-				this.axios.post('/admin/login', this.form).then(res => {
-					console.log(res)
+				this.axios.post('/admin/login', this.form, { loading: true })
+				.then(res => {
+					let Data = res.data.data;
 					//储存到vuex
-					//储存到本地储存
-					this.$store.commit('login', res.data.data)
+					//储存用户信息
+					this.$store.commit('user/login', res.data.data)
+					//存储权限规则
+					if(Data.role && Data.role.rules){
+						window.sessionStorage.setItem('rules', JSON.stringify(Data.role.rules))
+					}
 					//成功提示
 					this.$message({ type: 'success', message: '登录成功'});
 					this.loading = false

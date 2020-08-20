@@ -81,18 +81,24 @@ export default {
   mixins: [common],
   data() {
     return {
-      navBar: {},
+			user: { username: '' },
+			flag: true, //控制退出登录按钮的开关
       breadcrumb: []
     };
   },
   created() {
-		console.log(this.user.username)
-		if(!this.user.username) {
+		//获取用户信息
+		let user = window.sessionStorage.getItem('user');
+		if(user) {
+			this.user = JSON.parse(user)
+			//菜单
+			let menus = this.user.tree;
+			this.$store.commit('menu/createMenu', menus)
+		}
+		else {
 			this.$message.error('请登录')
 			this.$router.push({name: 'login'})
 		}
-    //初始化菜单
-    this.navBar = this.$conf.navBar
     //获取面包屑导航
     this.getRouterBran();
     //刷新页面时，主、侧导航位置依然在原位
@@ -100,6 +106,7 @@ export default {
   },
   watch: {
     //解决路由变化，面包屑导航数据不自动变更的问题
+		// '$route'(to, from){},
     $route() {
       //监听路由变化，执行面包屑函数
       this.getRouterBran()
@@ -114,9 +121,7 @@ export default {
     }
   },
   computed: {
-		...mapState({
-			user: state => state.user.user
-		}),
+		...mapState('menu', ['navBar']),
     asideActiveIndex: {
       get() {
         return (
@@ -165,8 +170,11 @@ export default {
         return
       }
       else if(key === '6-2') {
-				this.loginOut()
-        return
+				if(this.flag) {
+					this.flag = false
+					this.loginOut()
+				}
+				return 
       }
       this.navBar.activeIndex = key
       //默认跳转到当前激活
@@ -184,18 +192,19 @@ export default {
 		//退出登录
 		loginOut(){
 			this.axios.post('/admin/logout', {}, {
-				headers: {
-					token: this.user.token
-				}
+				token: true,
+				loading: true
 			})
 			.then(res => {
 				this.$message({type: 'success', message: '退出成功'})
-				this.$store.commit('loginOut')
+				this.flag = true
+				this.$store.commit('user/loginOut')
 				this.$router.push({name: 'login'})
 			})
 			.catch(err => {
-					//清除登录状态
-				this.$store.commit('loginOut')
+				this.flag = true
+				//清除登录状态
+				this.$store.commit('user/loginOut')
 				this.$router.push({name: 'login'})
 			})
 		}

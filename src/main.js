@@ -12,14 +12,36 @@ import VueDND from 'awe-dnd'
 Vue.use(VueDND)
 //引入Vuex的store库
 import store from './store'
+//防多次点击，重复提交
+import preventReClick from './common/preventReClick.js' 
 
 //引入logo等项目信息的配置文件
 import $conf from './common/config/config.js'
 
 import { Message } from 'element-ui'
+
+function showLoading(){
+	Message({type: 'warning', message: '加载中...'})
+}
+function hideLoading(){
+	Message.close()
+}
+// 添加请求拦截器
+axios.interceptors.request.use(function (config) {
+	if(config.token){
+		config.headers['token'] = window.sessionStorage.getItem('token');
+	}
+	if(config.loading){
+		showLoading();
+	}
+	return config;
+}, function (error) {
+	hideLoading()
+	return Promise.reject(error);
+});
 // 添加响应拦截器
 axios.interceptors.response.use((res) => {
-	// 对响应数据做点什么
+	hideLoading()
 	return res;
 }, function (err) {
 	//失败处理（提示）
@@ -27,6 +49,7 @@ axios.interceptors.response.use((res) => {
 	if(fail && fail.data && fail.data.errorCode){
 		Message.error(fail.data.msg);
 	} 
+	hideLoading()
 	return Promise.reject(err);
 });
 

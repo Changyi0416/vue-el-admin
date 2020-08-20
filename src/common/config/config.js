@@ -1,6 +1,7 @@
 //配置文件
 export default {
 	logo: 'YQ-ADMIN',
+	//navBar这个自定义tree已被接口数据替代
 	navBar: {
 		activeIndex: "0",
 		list: [
@@ -90,12 +91,12 @@ export default {
 				asideList: [{
 						icon: "el-icon-user",
 						name: "会员列表",
-						pathname: 'user_list'
+						pathname: 'user_user-list_list'
 					},
 					{
 						icon: "el-icon-s-data",
 						name: "会员等级",
-						pathname: 'user_level'
+						pathname: 'user_user-level_list'
 					},
 				]
 			},
