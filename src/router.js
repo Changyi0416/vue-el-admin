@@ -16,7 +16,6 @@ const router = new Router({ routes })
 router.beforeEach((to, from, next) => {
 	let token = window.sessionStorage.getItem('token')
 	if(token) {//已登录
-		console.log(to);
 		//防止重复登录
 		if(to.path == '/login') {
 			Vue.prototype.$message.error('请勿重复登录')
@@ -26,8 +25,6 @@ router.beforeEach((to, from, next) => {
 		//权限验证
 		let rules = window.sessionStorage.getItem('rules');
 		rules = rules ? JSON.parse(rules) : []
-		console.log(rules)
-		rules.splice(1,1)
 		let index = rules.findIndex(item => {
 			return item.rule_id && item.desc == to.name
 		})
