@@ -2,8 +2,8 @@
   <div>
     <el-tabs v-model="tabIndex" >
       <el-tab-pane label="管理员列表" name="0">
-        <div class="d-flex align-items-center">
-          <el-button class="mb-2" type="primary" @click="addModel" size="medium">添加用户</el-button>
+        <div class="d-flex align-items-center mb-2">
+          <el-button class="mb-2" type="primary" @click="addModel" size="medium" v-auth="'添加用户'">添加用户</el-button>
           <div class="d-flex ml-auto">
             <el-input class="mr-2" v-model="key" placeholder="请输入" size="medium"></el-input>
             <el-button type="info" @click="search" size="medium">搜索</el-button>
@@ -42,7 +42,7 @@
         </el-table>
       </el-tab-pane>
       <el-tab-pane label="角色列表" name="1">
-        <el-button class="mb-2" type="primary" @click="addModel" size="medium">添加角色</el-button>
+        <el-button class="mb-2" type="primary" @click="addModel" size="medium" v-auth="'添加角色'">添加角色</el-button>
         <el-table :data="groupData" border stripe>
           <el-table-column label="角色名称" prop="name" align="center"></el-table-column>
           <el-table-column label="添加时间" prop="time" align="center"></el-table-column>

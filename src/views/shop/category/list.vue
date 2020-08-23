@@ -1,16 +1,17 @@
 <template>
 	<div>
-		<el-button class="py-2" type="primary" @click="create" size="medium">创建顶级分类</el-button>
+		<el-button class="py-2 mb-2" type="primary" @click="create" size="medium">创建顶级分类</el-button>
 		<el-tree ref="tree" :data="data" :props="defaultProps" 
 		:default-expand-all="true"
 		:expand-on-click-node="false"
 		draggable
 		@node-click="handleNodeClick"
+		@node-drag-end="nodeDragEnd"
 		@node-drop="nodeDrop">
 			<span class="custom-tree-node" slot-scope="{ node, data }">
 				<div>
-					<el-input v-model="data.label" v-if="data.editStatus" size="mini" style="width: 200px;"></el-input>
-					<span v-else>{{ data.label }}</span>
+					<el-input v-model="data.name" :autofocus="false" v-if="data.editStatus" size="mini" style="width: 200px;"></el-input>
+					<span v-else>{{ data.name }}</span>
 				</div>
 				<span>
 					<el-button plain size="mini" :type="data.status ? 'success' : 'warning'"
@@ -31,10 +32,12 @@
 
 <script>
 	export default {
+		inject: ['layout'],
 		data() {
 			return {
 				defaultId: 3,
-				data: [{
+				data: [],
+				/* data: [{
 					id: 1,
 					status: 1,
 					editStatus: false,
@@ -79,44 +82,120 @@
 							label: '三级 2-2-1'
 						}]
 					}]
-				}],
+				}], */
 				defaultProps: {
-					children: 'children',
-					label: 'label'
+					children: 'child',
+					label: 'name'
+				},
+				//分支里新增分支
+				isAdd: false,
+				//新增分支的基本值
+				newChildren1: {
+					category_id: 0,
+					status: 0,
+					name: '', 
+					editStatus: true
+				},
+				newChildren2: {
+					category_id: 0,
+					status: 0,
+					name: 'value', 
+					editStatus: true
 				}
 			};
 		},
+		created(){
+			this.__init()
+		},
+		computed: {
+			drapSort(){
+				let newData = []
+				let sortData = function(arr){
+					arr.forEach(item => {
+						newData.push(item)
+						if(item.child.length){
+							sortData(item.child)
+						}
+					})
+				}
+				sortData(this.data)
+				newData = newData.map((item, i) => {
+					return {
+						name: item.name,
+						id: item.id,
+						order: i,
+						category_id: item.category_id
+					}
+				})
+				return newData
+			}
+		},
 		methods: {
+			//初始化获取树状分类
+			__init(){
+				this.layout.showLoading()
+				this.axios.get('/admin/category', { token: true })
+				.then(res => {
+					let data = res.data.data
+					let addEditStatus = function(arr){
+						arr.forEach(item => {
+							item.editStatus = false
+							if(item.child.length){
+								addEditStatus(item.child)
+							}
+						})
+					}
+					addEditStatus(data)
+					this.data = data
+					this.layout.hideLoading()
+				})
+				.catch(err => this.layout.hideLoading())
+			},
 			handleNodeClick(data) {
 				console.log(data);
 			},
 			//创建顶级分类
 			create(){
-				this.$prompt('请输入分类名称', '提示', {
+				this.$prompt('请输入顶级分类名称', '提示', {
 					confirmButtonText: '确定',
 					cancelButtonText: '取消',
 					inputPattern: /^[\s\S]*.*[^\s][\s\S]*$/,
-					inputErrorMessage: '分类名称不可为空'
+					inputErrorMessage: '顶级分类名称不可为空'
 				})
 				.then((val) => {
-					console.log(val)
+					this.newChildren1.name = val.value
+					console.log(this.newChildren1)
+					this.axios.post('/admin/category', this.newChildren1, { token: true })
+					.then(res => {
+						this.$message({type: 'success', message: '创建成功'})
+						this.__init()
+					})
 				})
+				.catch(_ => {});
 			},
 			//显示、隐藏
 			isShow(data){
-				data.status = data.status ? 0 : 1
+				this.layout.showLoading()
+				let status = data.status ? 0 : 1
+				let msg = status ? '显示' : '隐藏'
+				this.axios.post(`/admin/category/${data.id}/update_status`, { status: data.status ? 0 : 1 }, { token: true })
+				.then(res => {
+					data.status = status
+					this.$message({
+						message: msg + '成功',
+						type: 'success'
+					});
+					this.layout.hideLoading()
+				})
+				.catch(err => this.layout.hideLoading())
 			},
 			//新增
 			append(data){
-				const newChildren = {
-					id: this.defaultId++, 
-					status: 1,
-					editStatus: true,
-					label: 'testText', 
-					children: []
-				}
-				if(!data.children) this.$set(data, 'children', [])
-				data.children.push(newChildren)
+				this.newChildren2.category_id = data.id
+				this.newChildren2.name = "value"
+				this.isAdd = true
+				if(!data.child) this.$set(data, 'child', [])
+				data.child.push(this.newChildren2) 
 			},
 			//删除
 			remove(node, data){
@@ -126,22 +205,62 @@
 					type: "warning"
 				})
 				.then(() => {
-					let parent = node.parent
-					let children = parent.data.children || parent.data
-					let index = children.findIndex(v => v.id === data.id)
-					children.splice(index, 1)
-					this.$message({type: 'success', message: '删除成功'})
+					this.axios.delete(`/admin/category/${data.id}`, { token: true })
+					.then(res => {
+						console.log(res)
+						this.$message({type: 'success', message: '删除成功'})
+						this.__init()
+					})
 				})
+				.catch(_ => {});
 			},
-			//编辑/提交
+			//编辑/完成
 			edit(data){
-				data.editStatus = !data.editStatus
+				if(data.editStatus){
+					if(this.isAdd){
+						//新建完成事件
+						this.axios.post('/admin/category', this.newChildren2, { token: true })
+						.then(res => {
+							console.log(res)
+							this.isAdd = false 
+							this.__init()
+						})
+						return
+					}
+					//编辑完成事件
+					let params = {
+						status: data.status,
+						name: data.name,
+						category_id: data.id
+					}
+					this.axios.post(`/admin/category/${data.id}`, params, { token: true })
+					.then(res => {
+						data.editStatus = false
+					})
+				}else data.editStatus = true
+			},
+			//拖拽结束
+			nodeDragEnd(...options){
+				console.log(options)
+				let item = options[0].data //被拖拽的节点数据
+				let obj = options[1].data //结束拖拽时最后进入的节点数据
+				if(obj){
+					if(options[2] == 'before' || options[2] == 'after'){
+						item.category_id = obj.category_id
+					}else item.category_id = obj.id //options[2] == 'inner'
+				}
 			},
 			//拖拽
 			nodeDrop(...options){
-				// console.log(options);
-				console.log(options[0].data); //被拖拽节点
-				console.log(options[1].data); //被替换的节点
+				console.log(this.drapSort);
+				this.axios.post('/admin/category/sort', {
+					sortdata: JSON.stringify(this.drapSort)
+				}, { token: true })
+				.then(res => {
+					console.log(res)
+					this.$message({type: 'success', message: '排序成功'})
+					this.__init()
+				})
 			}
 		}
 	}

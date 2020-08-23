@@ -20,6 +20,24 @@ import $conf from './common/config/config.js'
 
 import { Message } from 'element-ui'
 
+//全局自定义变量（auth）权限验证
+Vue.directive('auth', {
+	inserted(el, binding, vnode, oldVnode){
+		//获取用户权限
+		let user = window.sessionStorage.getItem('user')
+		user = user ? JSON.parse(user) : {}
+		//如果不是管理员(user.super == 1为超级管理员)，将进行权限验证
+		//用法(<el-button v-auth="'添加用户'">添加用户</el-button>)
+		if(!user.super){ 
+			let ruleNames = user.ruleNames ? user.ruleNames : []
+			let index = ruleNames.findIndex(name => {
+				return name == binding.value
+			})
+			if(index == -1) vnode.elm.hidden = true
+		}
+	}
+})
+
 function showLoading(){
 	Message({type: 'warning', message: '加载中...'})
 }
@@ -42,6 +60,7 @@ axios.interceptors.request.use(function (config) {
 // 添加响应拦截器
 axios.interceptors.response.use((res) => {
 	hideLoading()
+	if(res.data.msg != 'ok') return Message.error('请求异常');
 	return res;
 }, function (err) {
 	//失败处理（提示）

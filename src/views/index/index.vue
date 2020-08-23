@@ -94,14 +94,24 @@
         </el-card>
       </el-col>
     </el-row>
+		<div class="container p-3">
+			<span>vue-count-to：</span>
+			<count-to :startVal="startVal" :endVal="endVal" :duration="3000"
+			:autoplay="true" suffix="访问量" separator=","
+			class="text-primary font-weight" style="font-size: 18px;"></count-to>
+		</div>
   </div>
 </template>
 
 <script>
 import echarts from "echarts";
+import countTo from 'vue-count-to'
 export default {
+	components: { countTo },
   data() {
     return {
+			startVal: 0,
+			endVal: 2000,
       counts: [
         {
           icon: "el-icon-user-solid",
@@ -175,6 +185,7 @@ export default {
     }
   },
   methods: {
+		//图表
     drawLine() {
       let chartInit = echarts.init(this.$refs.chart);
       // 指定图表的配置项和数据
@@ -261,7 +272,7 @@ export default {
       };
       // 使用刚指定的配置项和数据显示图表。
       chartInit.setOption(option);
-    }
+    },
   }
 };
 </script>

@@ -49,7 +49,8 @@
             </el-menu-item>
           </el-menu>
         </el-aside>
-        <el-main class="position-relative" style="padding-bottom: 80px;">
+        <el-main class="position-relative" style="padding-bottom: 80px;"
+				v-loading="loading">
           <!-- 内容-面包屑 -->
           <div
             class="border-bottom bg-white mb-2"
@@ -78,9 +79,15 @@
 import common from "@/common/mixins/common.js";
 import { mapState } from 'vuex'
 export default {
+	provide(){
+		return {
+			layout: this
+		}
+	},
   mixins: [common],
   data() {
     return {
+			loading: false,
 			user: { username: '' },
 			flag: true, //控制退出登录按钮的开关
       breadcrumb: []
@@ -137,6 +144,13 @@ export default {
     }
   },
   methods: {
+		//显示内容区域加载
+		showLoading(){
+			this.loading = true
+		},
+		hideLoading(){
+			this.loading = false
+		},
     //刷新页面时，主、侧导航位置依然在原位
     __initNavBarActive() {
       let l = localStorage.getItem("navBarActive");
