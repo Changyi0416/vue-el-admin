@@ -172,7 +172,7 @@ export default {
 					message: '删除成功'
 				})
 			})
-			.catch(e => e)
+			.catch(() => {});
 		},
 		chooseShopType(val){
 			console.log(val)

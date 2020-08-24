@@ -293,7 +293,7 @@
 					this.tableData.splice(i, 1)
 					this.$message({type: 'success', message: '删除成功'})
 				})
-				.catch(e => e)
+				.catch(() => {})
 			},
 			//分页
 			handleSizeChange(val) {

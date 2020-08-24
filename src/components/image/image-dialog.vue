@@ -204,7 +204,7 @@ export default {
             type: "success"
           });
         })
-        .catch(e => e);
+        .catch(() => {})
     },
     //删除图片
     imageDel(obj) {
@@ -229,7 +229,7 @@ export default {
             message: "删除成功!"
           });
         })
-        .catch(e => e);
+        .catch(() => {})
     },
     //选中图片
     imageSelected(item) {

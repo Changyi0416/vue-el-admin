@@ -4,10 +4,11 @@
 			<el-button size="medium" type="success" @click="addSku">添加规格</el-button>
 			<el-button size="medium" type="danger" @click="deleteMore">批量删除</el-button>
 		</div>
-		<el-table :data="tableData" style="width: 100%" border @selection-change="selectChange">
+		<el-table ref="table" :data="tableData" style="width: 100%" border @selection-change="selectChange"
+		size="medium">
 		  <el-table-column type="selection" fixed="left" align="center"></el-table-column>
 		  <el-table-column label="规格名称" prop="name" align="center"></el-table-column>
-		  <el-table-column label="规格值" prop="value" align="center"></el-table-column>
+		  <el-table-column label="规格值" prop="default" align="center"></el-table-column>
 		  <el-table-column label="商品排序" prop="order" align="center"></el-table-column>
 		  <el-table-column label="状态" align="center" width="140">
 		    <template slot-scope="scope">
@@ -22,25 +23,26 @@
 		  <el-table-column label="操作" width="160">
 		    <template slot-scope="scope">
 		      <el-button-group>
-		        <el-button type="success" plain size="medium"
-						@click="edit(scope.row, scope.$index)">编辑</el-button>
-		        <el-button type="danger" plain size="medium" 
-						@click="deleteItem(scope.$index)">删除</el-button>
+		        <el-button type="success" plain size="small"
+						@click="edit(scope.row)">编辑</el-button>
+		        <el-button type="danger" plain size="small" 
+						@click="deleteItem(scope.row)">删除</el-button>
 		      </el-button-group>
 		    </template>
 		  </el-table-column>
 		</el-table>
+		<div style="height: 60px;"></div>
 		<el-footer class="px-0 d-flex align-items-center position-fixed bg-white" 
 		style="left:200px; right: 0; bottom: 0; z-index: 4;">
 		  <div class="flex-grow-1 px-2 h-100 d-flex align-items-center">
 		    <el-pagination
-		      @size-change="handleSizeChange"
-		      @current-change="handleCurrentChange"
-		      :current-page="currentPage"
-		      :page-sizes="[10, 20, 30, 40]"
-		      :page-size="10"
+		      @size-change="pageSizeChange"
+		      @current-change="pageCurrentChange"
+		      :current-page="page.current"
+		      :page-sizes="page.sizes"
+		      :page-size="page.size"
 		      layout="total, sizes, prev, pager, next, jumper"
-		      :total="40">
+		      :total="page.total">
 		    </el-pagination>
 		  </div>
 		</el-footer>
@@ -57,12 +59,12 @@
 					<el-radio v-model="skuForm.status" :label="0" border>禁用</el-radio>
 				</el-form-item>
 				<el-form-item label="类型" prop="type">
-					<el-radio v-model="skuForm.type" :label="1" border>文字</el-radio>
-					<el-radio v-model="skuForm.type" :label="2" border>颜色</el-radio>
-					<el-radio v-model="skuForm.type" :label="3" border>图片</el-radio>
+					<el-radio v-model="skuForm.type" :label="0" border>文字</el-radio>
+					<el-radio v-model="skuForm.type" :label="1" border>颜色</el-radio>
+					<el-radio v-model="skuForm.type" :label="2" border>图片</el-radio>
 				</el-form-item>
-				<el-form-item label="规格值" prop="value">
-					<el-input type="textarea" v-model="skuForm.value" style="width: 60%;" placeholder="请输入" :rows="3"></el-input>
+				<el-form-item label="规格值" prop="default">
+					<el-input type="textarea" v-model="skuForm.default" style="width: 60%;" placeholder="一行为一个属性值，多个属性值用换行输入" :rows="3"></el-input>
 				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
@@ -74,51 +76,36 @@
 </template>
 
 <script>
+	import common from '@/common/mixins/common.js';
 	export default {
+		inject: ['layout'],
+		mixins: [ common ],
 		data(){
 			return {
-				tableData: [
-					{
-						id: 1,
-						name: '名称',
-						value: '值',
-						order: 1,
-						status: 1,
-						type: 1
-					},
-					{
-						id: 2,
-						name: '名称2',
-						value: '值2',
-						order: 2,
-						status: 0,
-						type: 2
-					},
-				],
-				checkedSku: [],
+				axiosSign: 'skus',
+				tableData: [],
 				//编辑
-				editSkuState: false,
-				editSkuI: -1,
+				editSkuId: 0,
 				//弹出层
 				skuModel: false,
 				skuForm: {
 					name: '',
-					value: '',
-					order: 50,
+					default: '',
+					order: 1,
 					status: 1,
-					type: 1
+					type: 0
 				},
 				skuFormRule: {
 					name: [
 						{ required: true, message: '请输入规格名称', trigger: 'blur' }
 					],
-					value: [
+					default: [
 						{ required: true, message: '请输入规格值', trigger: 'blur' }
 					],
 				},
-				//分页
-				currentPage: 1
 			}
+		},
+		created(){
 		},
 		methods: {
 			//添加规格
@@ -130,10 +117,10 @@
 				//表单初始化
 				this.skuForm = {
 					name: '',
-					value: '',
-					order: 50,
+					default: '',
+					order: 1,
 					status: 1,
-					type: 1
+					type: 0
 				}
 				this.skuModel = false
 			},
@@ -141,77 +128,22 @@
 			submitModel(){
 				this.$refs.skuForm.validate((valid) => {
 					if (valid) {
-						this.skuForm.value = 	this.skuForm.value.replace(/\n/g, ',')
-						//编辑
-						if(this.editSkuState) {
-							let item = this.tableData[this.editSkuI]
-							item.name = this.skuForm.name
-							item.value = this.skuForm.value
-							item.order = this.skuForm.order
-							item.status = this.skuForm.status
-							item.type = this.skuForm.type
-							//重置
-							this.editSkuState = false
-							this.editSkuI = -1
-						}else {
-							//新增
-							this.tableData.unshift(this.skuForm) 
-						}
-						this.closelModel()
-						this.$message({ type: 'success', message: '操作成功' })
+						this.skuForm.default = 	this.skuForm.default.replace(/\n/g, ',')
+						this.addOrEdit(this.skuForm, this.editSkuId)
 					}
 				});
 			},
-			//多选
-			selectChange(val) {
-			  this.checkedSku = val;
-			  console.log(this.checkedSku);
-			},
-			//批量删除
-			deleteMore(){
-				this.checkedSku.forEach(item => {
-					let i = this.tableData.findIndex(v => item.id == v.id)
-					this.tableData.splice(i, 1)
-				})
-			},
-			//修改启用、禁用状态
-			changeStatus(row){
-				row.status = row.status ? 0 : 1
-				let str = row.status ? '启用' : '禁用'
-				this.$message({type: 'success', message: `${str}成功`})
-			},
 			//编辑项
-			edit(item, i){
-				this.editSkuState = true
-				this.editSkuI = i
+			edit(item){
+				this.editSkuId = item.id
 				this.skuForm = {
 					name: item.name,
-					value: item.value.replace(/,/g, '\n'),
+					default: item.default.replace(/,/g, '\n'),
 					order: item.order,
 					status: item.status,
 					type: item.type
 				}
 				this.addSku()
-			},
-			//删除项
-			deleteItem(i){
-				this.$confirm('是否删除该规格', '提示', {
-					confirmButtonText: "确定",
-					cancelButtonText: "取消",
-					type: "warning"
-				})
-				.then(() => {
-					this.tableData.splice(i, 1)
-					this.$message({type: 'success', message: '删除成功'})
-				})
-				.catch(e => e)
-			},
-			//分页
-			handleSizeChange(val) {
-			  console.log(`每页 ${val} 条`);
-			},
-			handleCurrentChange(val) {
-			  console.log(`当前页: ${val}`);
 			},
 		}
 	}

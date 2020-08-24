@@ -209,7 +209,7 @@ export default {
 			.then(() => {
 				this.tableData[this.tabIndex].list.splice(index, 1);
 			})
-			.catch(()=>{})
+			.catch(() => {})
 		},
 		//上架  下架
 		statusChange(item){
@@ -221,7 +221,7 @@ export default {
 			.then(() => {
 				item.status = item.status == 1 ? 0 : 1;
 			})
-			.catch(()=>{})
+			.catch(() => {})
 		},
 		//分页
 		handleSizeChange(val) {

@@ -90,16 +90,10 @@
 				//分支里新增分支
 				isAdd: false,
 				//新增分支的基本值
-				newChildren1: {
+				addChildren: {
 					category_id: 0,
 					status: 0,
 					name: '', 
-					editStatus: true
-				},
-				newChildren2: {
-					category_id: 0,
-					status: 0,
-					name: 'value', 
 					editStatus: true
 				}
 			};
@@ -113,7 +107,7 @@
 				let sortData = function(arr){
 					arr.forEach(item => {
 						newData.push(item)
-						if(item.child.length){
+						if(item.child && item.child.length){
 							sortData(item.child)
 						}
 					})
@@ -163,15 +157,19 @@
 					inputErrorMessage: '顶级分类名称不可为空'
 				})
 				.then((val) => {
-					this.newChildren1.name = val.value
-					console.log(this.newChildren1)
-					this.axios.post('/admin/category', this.newChildren1, { token: true })
+					let newChildren = {
+						category_id: 0,
+						status: 0,
+						name: val.value, 
+						editStatus: true
+					}
+					this.axios.post('/admin/category', newChildren, { token: true })
 					.then(res => {
 						this.$message({type: 'success', message: '创建成功'})
 						this.__init()
 					})
 				})
-				.catch(_ => {});
+				.catch(() => {})
 			},
 			//显示、隐藏
 			isShow(data){
@@ -191,11 +189,12 @@
 			},
 			//新增
 			append(data){
-				this.newChildren2.category_id = data.id
-				this.newChildren2.name = "value"
+				console.log(data)
+				this.addChildren.category_id = data.id
+				this.addChildren.name = ''
 				this.isAdd = true
 				if(!data.child) this.$set(data, 'child', [])
-				data.child.push(this.newChildren2) 
+				data.child.push(this.addChildren) 
 			},
 			//删除
 			remove(node, data){
@@ -212,14 +211,14 @@
 						this.__init()
 					})
 				})
-				.catch(_ => {});
+				.catch(() => {})
 			},
 			//编辑/完成
 			edit(data){
 				if(data.editStatus){
 					if(this.isAdd){
 						//新建完成事件
-						this.axios.post('/admin/category', this.newChildren2, { token: true })
+						this.axios.post('/admin/category', this.addChildren, { token: true })
 						.then(res => {
 							console.log(res)
 							this.isAdd = false 
@@ -231,17 +230,17 @@
 					let params = {
 						status: data.status,
 						name: data.name,
-						category_id: data.id
+						category_id: data.category_id
 					}
 					this.axios.post(`/admin/category/${data.id}`, params, { token: true })
 					.then(res => {
 						data.editStatus = false
+						this.__init()
 					})
 				}else data.editStatus = true
 			},
 			//拖拽结束
 			nodeDragEnd(...options){
-				console.log(options)
 				let item = options[0].data //被拖拽的节点数据
 				let obj = options[1].data //结束拖拽时最后进入的节点数据
 				if(obj){

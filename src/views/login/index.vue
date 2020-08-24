@@ -62,9 +62,7 @@ export default {
 					//跳转到后台首页
 					this.$router.push({ name: "index" });
 				})
-				.catch(err => {
-					this.loading = false
-				})
+				.catch(err => this.loading = false)
       });
     }
   }

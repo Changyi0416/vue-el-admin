@@ -8,7 +8,7 @@
       <el-table-column type="selection" fixed="left" align="center"></el-table-column>
       <el-table-column label="类型名称" prop="name" align="center"></el-table-column>
       <el-table-column label="属性标签" align="center">
-        <template slot-scope="scope">{{scope.row.value_list | formatValue}}</template>
+        <template slot-scope="scope">{{scope.row.goods_type_values | formatValue}}</template>
       </el-table-column>
       <el-table-column label="属性排序" prop="order" align="center"></el-table-column>
       <el-table-column label="状态" align="center" width="140">
@@ -27,7 +27,7 @@
               @click="editTypeItem(scope.row, scope.$index)"
             >编辑</el-button>
             <el-button type="danger" plain size="medium"
-              @click="deleteTypeItem(scope.$index)"
+              @click="deleteTypeItem(scope.row)"
             >删除</el-button>
           </el-button-group>
         </template>
@@ -39,14 +39,14 @@
     >
       <div class="flex-grow-1 px-2 h-100 d-flex align-items-center">
         <el-pagination
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :current-page="currentPage"
-          :page-sizes="[10, 20, 30, 40]"
-          :page-size="10"
+          @size-change="pageSizeChange"
+          @current-change="pageCurrentChange"
+          :current-page="page.current"
+          :page-sizes="page.sizes"
+          :page-size="page.size"
           layout="total, sizes, prev, pager, next, jumper"
-          :total="40"
-        ></el-pagination>
+          :total="page.total">
+        </el-pagination>
       </div>
     </el-footer>
     <el-dialog title="添加商品类型" :visible.sync="typeModel" top="3vh" width="75%">
@@ -136,39 +136,17 @@
 </template>
 
 <script>
+import common from '@/common/mixins/common.js';
 export default {
+	inject: ['layout'],
+	mixins: [ common ],
   data() {
     return {
-      tableData: [
-        {
-          id: 1,
-          name: "鞋子",
-          order: 50,
-          status: 1,
-          sku_list: [
-            { id: 1, name: "颜色" },
-            { id: 2, name: "尺寸" },
-          ],
-          value_list: [
-            {
-              order: 50,
-              name: "特性",
-              type: "input",
-              editValStatus: false,
-              value: "特性1,特性2,特性3",
-            },
-            {
-              order: 50,
-              name: "前置摄像机",
-              type: "input",
-              editValStatus: false,
-              value: "前置摄像机1,摄像头2",
-            },
-          ],
-        },
-      ],
+			axiosSign: 'goods_type',
+			sign: '',
+      tableData: [],
       //多选
-      checkedType: [],
+      // checkedType: [],
       //编辑商品类型
       editTypeState: false,
       editTypeI: -1,
@@ -196,8 +174,13 @@ export default {
       //编辑属性值
       editValStatus: false,
       formValid: true, //表单验证是否通过
-      //分页
-      currentPage: 1,
+			//分页
+			page: {
+				current: 1, //当前所在页数
+				sizes: [5, 10, 20, 50],
+				size: 5, //一页显示多少条
+				total: 0, //总数量
+			}
     };
   },
   filters: {
@@ -206,6 +189,8 @@ export default {
       return arr.join("，");
     },
   },
+	created() {
+	},
   methods: {
     //添加规格
     addType() {
@@ -306,15 +291,14 @@ export default {
         this.value_list.splice(i, 1)
         this.$message({ type: "success", message: "删除成功" });
       })
-      .catch((e) => e);
+      .catch(() => {})
     },
 
     //商品类型表格操作
-    //多选
+    /* //多选
     selectChange(val) {
       this.checkedType = val;
-      console.log(this.checkedType);
-    },
+    }, */
     //批量删除
     deleteMore() {
       this.checkedType.forEach((item) => {
@@ -324,9 +308,16 @@ export default {
     },
     //修改启用、禁用状态
     changeStatus(row) {
-      row.status = row.status ? 0 : 1;
+			let status = row.status ? 0 : 1
+			let str = status ? '启用' : '禁用'
+			this.axios.post(`/admin/goods_type/${row.id}/update_status`, { status: status }, { token: true })
+			.then(res => {
+				row.status = status
+				this.$message({type: 'success', message: `${str}成功`})
+			})
+      /* row.status = row.status ? 0 : 1;
       let str = row.status ? "启用" : "禁用";
-      this.$message({ type: "success", message: `${str}成功` });
+      this.$message({ type: "success", message: `${str}成功` }); */
     },
     //编辑项
     editTypeItem(item, i) {
@@ -342,25 +333,32 @@ export default {
       this.addType();
     },
     //删除项
-    deleteTypeItem(i) {
+    deleteTypeItem(item) {
       this.$confirm("是否删除该类型", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
       })
-        .then(() => {
-          this.tableData.splice(i, 1);
-          this.$message({ type: "success", message: "删除成功" });
-        })
-        .catch((e) => e);
+			.then(() => {
+				this.axios.post(`/admin/goods_type/${item.id}/delete`, {}, { token: true })
+				.then(res => {
+					this.$message({type: 'success', message: '删除成功'})
+					this.__init()
+				})
+				.catch(() => {});
+			})
+			.catch(() => {})
     },
-    //分页
-    handleSizeChange(val) {
-      console.log(`每页 ${val} 条`);
-    },
-    handleCurrentChange(val) {
-      console.log(`当前页: ${val}`);
-    },
+		//分页(每页几条)
+		pageSizeChange(val) {
+			this.page.size = val
+			this.__init()
+		},
+		//页码切换
+		pageCurrentChange(val) {
+			this.page.current = val
+			this.__init()
+		},
   },
 };
 </script>

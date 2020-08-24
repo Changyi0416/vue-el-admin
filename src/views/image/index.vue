@@ -204,7 +204,6 @@ export default {
 					this.albumsIndex = this.albums.findIndex(v => {
 						return v.id == this.currentAlbumId
 					})
-					console.log(this.albumsIndex)
 				}
 				if(type == 'delete') this.currentAlbumId = this.albums[this.albumsIndex].id
 				if(type == 'change') return
@@ -230,9 +229,7 @@ export default {
 				this.imgTotal = Data.totalCount
 				this.layout.loading = false
 			})
-			.catch(err => {
-				this.layout.loading = false
-			})
+			.catch(err => this.layout.loading = false)
 		},
 		//点击相册
 		albumHandel(item, i){
@@ -304,7 +301,7 @@ export default {
 					}
 				})
 			})
-			.catch(() => {});
+			.catch(() => {})
     },
     //相册分页
 		changeAlbumPage(sign){
@@ -348,7 +345,7 @@ export default {
 					this.getImage()
 				})
 			})
-			.catch(e => e);
+			.catch(() => {})
     },
     //删除图片
     imageDel(obj) {
@@ -379,7 +376,7 @@ export default {
 					})
 				} 
       })
-      .catch(e => e);
+      .catch(() => {})
     },
     //选中图片
     imageSelected(item) {
