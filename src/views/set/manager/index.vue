@@ -32,7 +32,7 @@
               <el-switch v-model="scope.row.status" :active-value="1" :inactive-value="0"></el-switch>
             </template>
           </el-table-column>
-          <el-table-column label="操作">
+          <el-table-column label="操作" align="center">
             <template>
               <el-link type="primary" :underline="false" class="mr-2" @click="editItem(scope.row, scope.$index)">修改</el-link>
               <el-link type="primary" :underline="false" class="mr-2" @click="resetPassItem(scope.row, scope.$index)">重置密码</el-link>
@@ -51,7 +51,7 @@
               <el-switch v-model="scope.row.status" :active-value="1" :inactive-value="0"></el-switch>
             </template>
           </el-table-column>
-          <el-table-column label="操作" width="150px">
+          <el-table-column label="操作" width="150px" align="center">
             <template>
               <el-link type="primary" :underline="false" class="mr-2" @click="groupEdit(scope.row, scope.$index)">修改</el-link>
               <el-link type="primary" :underline="false" class="mr-2" @click="groupConfig(scope.row, scope.$index)">配置权限</el-link>

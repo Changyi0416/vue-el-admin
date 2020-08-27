@@ -20,7 +20,7 @@
 					<br>
 		    </template>
 		  </el-table-column>
-		  <el-table-column label="操作" width="160">
+		  <el-table-column label="操作" width="160" align="center">
 		    <template slot-scope="scope">
 		      <el-button-group>
 		        <el-button type="success" plain size="small"
@@ -46,7 +46,8 @@
 		    </el-pagination>
 		  </div>
 		</el-footer>
-		<el-dialog title="添加商品规格" :visible.sync="skuModel" top="3vh">
+		<el-dialog title="添加商品规格" :visible.sync="skuModel" top="3vh"
+		:before-close="closeModel">
 			<el-form ref="skuForm" :model="skuForm" :rules="skuFormRule" size="medium" label-width="80px">
 				<el-form-item label="规格名称" prop="name">
 					<el-input v-model="skuForm.name" style="width: 40%;" placeholder="请输入"></el-input>
@@ -68,7 +69,7 @@
 				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
-				<el-button @click="closelModel">取 消</el-button>
+				<el-button @click="closeModel">取 消</el-button>
 				<el-button type="primary" @click="submitModel">确 定</el-button>
 			</div>
 		</el-dialog>
@@ -83,6 +84,7 @@
 		data(){
 			return {
 				axiosSign: 'skus',
+				signText: '规格',
 				tableData: [],
 				//编辑
 				editSkuId: 0,
@@ -113,7 +115,7 @@
 				this.skuModel = true
 			},
 			//取消弹框
-			closelModel(){
+			closeModel(){
 				//表单初始化
 				this.skuForm = {
 					name: '',

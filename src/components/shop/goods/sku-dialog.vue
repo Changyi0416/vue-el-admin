@@ -1,13 +1,12 @@
 <template>
   <!-- 相册弹出层-选择相片 -->
-  <el-dialog title="商品规格选择" class="chooseImage" :visible.sync="skuDialog" width="90%" top="3vh">
+  <el-dialog title="商品规格选择" class="chooseImage" :visible.sync="skuDialog" width="80%" top="3vh"
+		:before-close="close">
     <el-container style="height: 65vh;">
       <el-container style="position: relative;">
         <!-- 侧边 -->
-        <el-aside
-          width="180px"
+        <el-aside width="180px" style="top: 0; left:0; bottom: 35px;"
           class="position-absolute bg-white border-right"
-          style="top: 0; left:0; bottom: 0;"
         >
           <ul class="list-group list-group-flush">
 						<li class="list-group-item list-group-item-action" style="cursor: pointer;"
@@ -16,6 +15,20 @@
 						:class="skuIndex == i ? 'album-active' : ''">{{item.name}}</li>
           </ul>
         </el-aside>
+				<el-footer style="width: 180px; height: 35px; left: 0; bottom: 0;"
+				 class="position-absolute border-right d-flex align-items-center justify-content-center">
+					<el-pagination
+						small
+						background
+					  @size-change="pageSizeChange"
+					  @current-change="pageCurrentChange"
+					  :current-page="page.current"
+					  :page-sizes="page.sizes"
+					  :page-size="page.size"
+					  layout="prev, next"
+					  :total="page.total">
+					</el-pagination>
+				</el-footer>
         <el-container>
 					<el-header style="margin-left: 180px;">
 						<el-button type="primary" size="mini" @click="doChooseAll">{{isChooseAll ? '取消全选' : '全选'}}</el-button>
@@ -40,7 +53,9 @@
 </template>
 
 <script>
+	import common from '@/common/mixins/common.js';
 export default {
+	mixins: [ common ],
 	props: {
 		maxNum: { //选择图片最大限制
 			type: Number,
@@ -49,12 +64,17 @@ export default {
 	},
   data() {
     return {
+			axiosSign: 'skus',
+			signText: '规格',
+			isLoading: false,
+			
       skuDialog: false, //选择规格图层是否显示
       callback: false,
 			
 			//模拟数据
 			skuIndex: 0,
-			skusList: [
+			skusList: [],
+			/* skusList: [
 				{
 					name: '尺寸',
 					type: 0, //规格类型 0无 1颜色 2图片
@@ -94,7 +114,7 @@ export default {
 						isChecked: false
 					}]
 				}
-			],
+			], */
 			//被选中的数组
 			chooseList: [],
     };
@@ -104,8 +124,9 @@ export default {
 	computed: {
 		// 当前规格下的规格属性列表
 		skuItem() {
-			let item = this.skusList[this.skuIndex]
-			return item ? item.list : []
+			let skusList = this.skusList[this.skuIndex]
+			let valList = skusList ? skusList.valList : []  
+			return valList
 		},
 		//是否全选
 		isChooseAll(){
@@ -113,19 +134,34 @@ export default {
 		}
 	},
   methods: {
+		handleData(Data){
+			this.skusList = Data.list
+			this.skusList.forEach(item => {
+				let defaultVal = item ? item.default.split(',') : []
+				item.valList = defaultVal.map(name => {
+					return {
+						name,
+						color: '',
+						image: '',
+						isChecked: false
+					}
+				})
+			})
+		},
     //打开【选择规格】弹出层
     open(callback) {
       this.callback = callback;
       this.skuDialog = true;
     },
     confirm() {
-			if(this.chooseList.length == 0){
+			/* if(this.chooseList.length == 0){
 				return this.$message({type: 'error', message: '请选择规格值'})
-			}
+			} */
       //返回选中的url
       if (typeof this.callback === "function") {
 				let item = this.skusList[this.skuIndex];
         this.callback({
+						id: item.id,
 						name: item.name,
 						type: item.type,
 						list: this.chooseList
@@ -166,22 +202,22 @@ export default {
 		},
     //取消选中、全选
     doChooseAll() {
-			let list = this.skusList[this.skuIndex].list;
+			let valList = this.skusList[this.skuIndex].valList;
 		 	//已经全选
 			if(this.isChooseAll) {
 				return this.unChooseAll()
 			}
 			//全选
-			this.chooseList = list.map(v => {
+			this.chooseList = valList.map(v => {
 				v.isChecked = true
 				return v
 			})
     },
 		//取消全选
 		unChooseAll(){
-			let list = this.skusList[this.skuIndex].list;
+			let valList = this.skusList[this.skuIndex].valList;
 			//取消选中状态
-			list.forEach(v => {
+			valList.forEach(v => {
 				v.isChecked = false
 			})
 			//清空选中列表

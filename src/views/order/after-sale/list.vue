@@ -20,7 +20,7 @@
       <el-table-column label="买家" prop="" align="center"></el-table-column>
       <el-table-column label="交易状态" prop="" align="center"></el-table-column>
       <el-table-column label="创建时间" prop="" align="center"></el-table-column>
-      <el-table-column label="操作" width="160">
+      <el-table-column label="操作" width="160" align="center">
         <template slot-scope="scope">
           <el-button-group>
             <el-button type="success" plain size="medium"
@@ -33,6 +33,7 @@
         </template>
       </el-table-column>
     </el-table>
+		<div style="height: 60px;"></div>
     <el-footer class="px-0 d-flex align-items-center position-fixed bg-white" 
 		style="left:200px; right: 0; bottom: 0; z-index: 4;">
 		  <div class="flex-grow-1 px-2 h-100 d-flex align-items-center">

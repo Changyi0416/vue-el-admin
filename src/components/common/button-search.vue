@@ -9,9 +9,9 @@
 			<div v-show="!searchSeniorShow">
 				<slot name="right">
 					<div class="d-flex align-items-center">
-						<el-input type="text" v-model="keyword" size="mini" :placeholder="placeholder" class="mr-2" style="width: 150px;"></el-input>
-						<el-button size="mini" type="info" @click="$emit('search', keyword)">搜索</el-button>
-						<el-button size="small" @click="searchSeniorShow = true">高级搜索</el-button>
+						<el-input type="text" v-model="keyword" size="small" :placeholder="placeholder" class="mr-2" style="width: 150px;"></el-input>
+						<el-button size="small" type="info" @click="$emit('search', keyword)">搜索</el-button>
+						<el-button size="small" v-show="hasSearchSenior" @click="searchSeniorShow = true">高级搜索</el-button>
 					</div>
 				</slot>
 			</div>
@@ -35,6 +35,10 @@
 				type: String,
 				default: ''
 			},
+			hasSearchSenior: {
+				type: Boolean,
+				default: false
+			}
 		},
 		data() {
 			return {

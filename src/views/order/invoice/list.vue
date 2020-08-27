@@ -20,7 +20,7 @@
       <el-table-column label="发票内容" prop="" align="center"></el-table-column>
       <el-table-column label="缴纳人识别号" prop="" align="center"></el-table-column>
       <el-table-column label="创建时间" prop="" align="center"></el-table-column>
-      <el-table-column label="操作" width="160">
+      <el-table-column label="操作" width="160" align="center">
         <template slot-scope="scope">
           <el-button-group>
             <el-button type="success" plain size="medium"

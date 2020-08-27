@@ -17,7 +17,7 @@
               <el-switch v-model="scope.row.status" :active-value="1" :inactive-value="0"></el-switch>
             </template>
           </el-table-column>
-          <el-table-column label="操作">
+          <el-table-column label="操作" align="center">
             <template>
               <el-link type="primary" :underline="false" class="mr-2" @click="editItem(scope.row, scope.$index)">修改</el-link>
               <el-link type="danger" :underline="false" @click="deleteItem(scope.row, scope.$index)">删除</el-link>

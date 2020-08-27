@@ -11,10 +11,10 @@
               class="mr-2"
               style="width: 220px;" size="medium"
             >
-              <el-option label="区域一" value="shanghai"></el-option>
-              <el-option label="区域二" value="beijing"></el-option>
+              <el-option label="升序" value="asc"></el-option>
+              <el-option label="降序" value="desc"></el-option>
             </el-select>
-            <el-input v-model="form.name" size="medium" placeholder="相册名称" class="mr-2" style="width: 220px;"></el-input>
+            <el-input v-model="form.keyword" size="medium" placeholder="相册名称" class="mr-2" style="width: 220px;"></el-input>
             <el-button type="success" size="medium" @click="search">搜索</el-button>
           </div>
           <el-button type="warning" size="medium" v-show="chooseImgList.length > 0" @click="cancelSelected()">取消选中</el-button>
@@ -86,15 +86,15 @@
           </el-button-group>
         </div>
         <div class="flex-grow-1 px-2 h-100 border-top d-flex align-items-center">
-          <el-pagination
-            @size-change="pageSizeChange"
-            @current-change="pageCurrentChange"
-            :current-page="currentPage"
-            :page-sizes="[10, 20, 30]"
-            :page-size="imgPageSize"
-            layout="total, sizes, prev, pager, next, jumper"
-            :total="imgTotal">
-          </el-pagination>
+					<el-pagination
+					  @size-change="pageSizeChange"
+					  @current-change="pageCurrentChange"
+					  :current-page="page.current"
+					  :page-sizes="page.sizes"
+					  :page-size="page.size"
+					  layout="total, sizes, prev, pager, next, jumper"
+					  :total="page.total">
+					</el-pagination>
         </div>
       </el-footer>
     </el-container>
@@ -144,7 +144,6 @@
 import albumItem from "@/components/image/album-item.vue";
 export default {
 	inject: ['layout'],
-	
   components: {
     albumItem
   },
@@ -152,7 +151,7 @@ export default {
     return {
       form: {
         order: "",
-        name: ""
+        keyword: ""
       },
       //相册列表
       albumEditId: -1, //被修改的id
@@ -175,10 +174,12 @@ export default {
       imageArr: [],
       chooseImgList: [], //被选中的图片
       //分页
-			imgPage: 1, //图片页码
-			imgTotal: 0, //图片总数量
-			imgPageSize: 10, //一页显示多少张图片
-      currentPage: 1 //当前所在页数
+			page: {
+				current: 1, //当前所在页数
+				sizes: [5, 10, 20, 50],
+				size: 10, //一页显示多少条
+				total: 0, //总数量
+			}
     };
   },
   created() {
@@ -192,7 +193,9 @@ export default {
   methods: {
     //初始化相册列表
     __init(type) {
-			this.axios.get(`/admin/imageclass/${this.albumPage}?limit=10`, { token: true })
+			this.layout.loading = true
+			let params = `&order=${this.form.order}&keyword=${this.form.keyword}`
+			this.axios.get(`/admin/imageclass/${this.albumPage}?limit=10${params}`, { token: true })
 			.then(res => {
 				this.albums = res.data.data.list
 				this.albumMaxPage = Math.ceil(res.data.data.totalCount/10)
@@ -209,11 +212,12 @@ export default {
 				if(type == 'change') return
 				this.getImage()
 			})
+			.catch(err => this.layout.loading = false)
     },
 		//获取相册里的图片
 		getImage(){
 			this.layout.loading = true
-			this.axios.get(`/admin/imageclass/${this.currentAlbumId}/image/${this.imgPage}?limit=${this.imgPageSize}`, 
+			this.axios.get(`/admin/imageclass/${this.currentAlbumId}/image/${this.page.current}?limit=${this.page.size}`, 
 			{ token: true })
 			.then(res => {
 				let Data = res.data.data
@@ -226,7 +230,7 @@ export default {
 						checkOrder: 0
 					}
 				})
-				this.imgTotal = Data.totalCount
+				this.page.total = Data.totalCount
 				this.layout.loading = false
 			})
 			.catch(err => this.layout.loading = false)
@@ -337,7 +341,6 @@ export default {
 			.then(data => {
 				this.axios.post(`/admin/image/${item.id}`, { name: data.value }, { token: true })
 				.then(res => {
-					console.log(res)
 					this.$message({
 						message: "修改成功",
 						type: "success"
@@ -367,8 +370,6 @@ export default {
 					})
         }//删除一个
 				else if(obj.id){
-					// this.imageArr.splice(obj.i, 1);
-					console.log(obj)
 					this.axios.delete(`/admin/image/${obj.id}`, { token: true })
 					.then(res => {
 						this.$message({ type: "success",  message: "删除成功!"});
@@ -383,10 +384,6 @@ export default {
       //选中
       if (!item.isCheck) {
         //chooseImgList加入选中
-        /* this.chooseImgList.push({
-          id: item.id,
-          url: item.url
-        }); */
 				this.chooseImgList.push(item.id);
         //计算序号
         item.checkOrder = this.chooseImgList.length;
@@ -430,15 +427,17 @@ export default {
     },
     //图片分页（每页几条）
     pageSizeChange(val) {
-			this.imgPageSize = val
+			this.page.size = val
 			this.getImage()
     },
 		//图片分页（页码切换）
     pageCurrentChange(val) {
-			this.imgPage = val
+			this.page.current = val
 			this.getImage()
     },
-    search() {},
+    search() {
+			this.__init()
+		},
     create() {},
     upload() {}
   }

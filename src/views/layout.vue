@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-container
-      style="position: absolute; left: 0; right: 0; top: 0; bottom: 0; overflow: hidden;"
+      style="position: absolute; left: 0; right: 0; top: 0; bottom: 0px; overflow: hidden;"
     >
       <el-header class="d-flex align-items-center" style="background: rgb(84, 92, 100);">
         <a class="text-light h5 mb-0 mr-auto" style="cursor: pointer;">

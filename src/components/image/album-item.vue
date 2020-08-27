@@ -26,7 +26,7 @@
   </div>
 </template>
 
-<script>
+<script >
 export default {
   props: {
     item: Object,
@@ -50,7 +50,7 @@ export default {
   border-color: #c2e7b0 !important;
 }
 .list-group-item:last-child {
-	padding: 10px;
+	/* padding: 10px; */
 	border-left: none;
 	border-right: none;
 }

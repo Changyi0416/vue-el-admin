@@ -64,4 +64,12 @@ export default {
 ::-webkit-scrollbar-corner{
   background: #179a16;
 }
+
+/* el-form */
+.el-form-item--medium .el-form-item__label {
+	margin-bottom: 0;
+}
+.el-dialog__body .el-form-item {
+    margin-bottom: 20px !important;
+}
 </style>

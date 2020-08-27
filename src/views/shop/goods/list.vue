@@ -4,7 +4,7 @@
       <el-tabs v-model="tabIndex" @tab-click="handleClick">
         <el-tab-pane :label="item.name" v-for="(item, i) in tabBar" :key="i">
           <!-- 操作按钮+搜索+高级搜索 -->
-          <button-search ref="buttonSearch" placeholder="请输入商品名称" @search="search">
+          <button-search ref="buttonSearch" placeholder="请输入商品名称" hasSearchSenior @search="search">
             <template #left>
               <router-link :to="{name: 'shop_goods_create'}" class="mr-2">
                 <el-button size="mini" type="success">发布商品</el-button>
@@ -83,7 +83,7 @@
             </el-table-column>
             <el-table-column label="总库存" prop="stock" align="center"></el-table-column>
             <el-table-column label="价格（元）" prop="pprice" align="center"></el-table-column>
-            <el-table-column label="操作" width="140">
+            <el-table-column label="操作" width="140" align="center">
               <template slot-scope="scope">
                 <el-button-group>
                   <el-button type="success" plain size="mini">编辑</el-button>

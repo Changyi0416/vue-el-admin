@@ -119,7 +119,7 @@ export default {
 	components: { baseSet, simpleAttrs, manyAttrs, tinymce },
   data() {
     return {
-      tabIndex: '2',
+      tabIndex: '0',
 			select: '',
 			radio: '1',
 			checkboxGroup: [],

@@ -60,7 +60,7 @@ export default {
 					},
 					{
 						icon: "el-icon-coffee",
-						name: "商品评论",
+						name: "商品评价",
 						pathname: 'shop_comment_list'
 					},
 				]
