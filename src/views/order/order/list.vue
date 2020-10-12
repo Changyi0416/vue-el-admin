@@ -9,7 +9,7 @@
 			<button-search ref="buttonSearch" placeholder="要搜索的订单编号" hasSearchSenior @search="search">
 			  <template #left>
 			    <el-button size="mini" type="success">导出数据</el-button>
-			    <el-button size="mini" type="danger">批量删除</el-button>
+			    <el-button size="mini" type="danger" @click="deleteMore">批量删除</el-button>
 			  </template>
 			  <template #form>
 			    <el-form ref="form" :model="form" label-width="80px" size="small">
@@ -51,7 +51,7 @@
 			    </el-form>
 			  </template>
 			</button-search>
-			<el-table :data="tableData" style="width: 100%" border @selection-change="selectChange">
+			<el-table ref="table" :data="tableData" style="width: 100%" border @selection-change="selectChange" >
 			  <el-table-column type="selection" fixed="left" align="center"></el-table-column>
 			  <el-table-column label="商品信息" width="250">
 			    <template slot-scope="scope">
@@ -115,9 +115,16 @@
 						</div>
 			    </template>
 			  </el-table-column>
-			  <el-table-column label="操作" width="120" align="center">
-			    <template>
-			      <el-button type="success" size="small">订单详情</el-button>
+			  <el-table-column label="操作" width="140" align="center">
+			    <template slot-scope="scope">
+			      <el-button type="text" size="small" class="mb-2">订单详情</el-button>
+						<br>
+						<!-- v-show="scope.row.ship_status === 'pending' && scope.row.closed === 0 && scope.row.payment_method && scope.row.refund_status === 'pending'" -->
+			      <el-button type="text" size="small" @click="ship(scope.row)"
+						
+						>
+							订单发货
+						</el-button>
 			    </template>
 			  </el-table-column>
 			</el-table>
@@ -136,6 +143,27 @@
         </div>
       </el-footer>
     </div>
+		<el-dialog title="订单发货" :visible.sync="shipModel" width="30%">
+			<!--  :rules="shipRules" -->
+		  <el-form v-model="shipForm" label-width="80px" ref="shipForm">
+				<el-form-item label="快递公司" prop="expressCompany">
+					<!-- <el-input type="text" v-model="shipForm.express_company" placeholder="请输入"></el-input> -->
+					<el-select v-model="shipForm.express_company" placeholder="请选择">
+						<el-option
+							v-for="item in express_company_options" :key="item.id"
+							:label="item.name" :value="item.code">
+						</el-option>
+					</el-select>
+				</el-form-item>
+				<el-form-item label="快递单号" prop="expressNo">
+					<el-input type="number" v-model="shipForm.express_no" placeholder="请输入"></el-input>
+				</el-form-item>
+			</el-form>
+		  <span slot="footer" class="dialog-footer">
+		    <el-button @click="shipModel = false">取 消</el-button>
+		    <el-button type="primary" @click="submitShip">确 定</el-button>
+		  </span>
+		</el-dialog>
   </div>
 </template>
 
@@ -169,23 +197,33 @@ export default {
         phone: "",
 				time: ""
       },
+			//订单发货 Model
+			shipModel: false,
+			shipId: 0,
+			shipForm: {
+				express_company: '',
+				express_no: ''
+			},
+			shipRules: {
+				expressCompany: [{ required: true, message: '请输入快递公司', trigger: 'blur' }],
+				expressNo: [{ required: true, message: '请输入快递单号', trigger: 'blur' }]
+			},
+			//快递公司列表
+			express_company_options: []
     };
   },
   created() {
 		this.__init(`&tab=${this.tabVal}`)
+		this.getExpress_company()
 	},
   methods: {
-		handleData(Data){
-			this.tableData = Data.list
-			this.tableData.forEach(item => {
-				if(item.order_items) item.order_items.forEach(current => {
-					current.goods_item = {
-						title: '树叶',
-						cover: 'http://tangzhe123-com.oss-cn-shenzhen.aliyuncs.com/public/5f3f96c35a7be.jpg'
-					}
-				})
+		//获取快递公司数据
+		getExpress_company(){
+			this.axios.get(`/admin/express_company/1?limit=50`, { token: true })
+			.then(res => {
+				this.express_company_options = res.data.data.list;
 			})
-			console.log(this.tableData)
+			.catch(() => {})
 		},
 		handleClick(tab, event) {
 			this.tabVal = tab.name
@@ -193,9 +231,6 @@ export default {
     },
 		//搜索
     search(val) {
-			// console.log(this.form)
-			// let startTime = this.form.time[0]
-			// return
       if (typeof val === "string") {
 				return this.__init(`&tab=${this.tabVal}&no=${val}`)
       }
@@ -215,30 +250,39 @@ export default {
 				time: ""
       }
     },
-		//table->删除某一项
-		deleteItem(index){
-			this.$confirm('确定删除该数据', '提示', {
-				confirmButtonText: '确定',
-				cancelButtnText: '取消',
-				type: 'warning'
-			})
-			.then(() => {
-				this.tableData[this.tabIndex].list.splice(index, 1);
-			})
-			.catch(() => {})
+		//订单发货
+		ship(item){
+			this.shipId = item.id
+			this.shipModel = true
 		},
-		//上架  下架
-		statusChange(item){
-			this.$confirm('是否' + (item.status == 1 ? '上架' : '下架') + '该商品', '提示', {
-				confirmButtonText: '确定',
-				cancelButtnText: '取消',
-				type: 'warning'	
+		submitShip(){
+			this.shipModel = false
+			this.layout.showLoading()
+			//提交
+			if(this.shipId !== '') this.axios.post(`/admin/order/${this.shipId}/ship`, this.shipForm, { token: true })
+			.then(res => {
+				this.layout.hideLoading()
+				if(res.data.data.data) this.$message({type: 'success', message: '发货成功'})
+				this.__init()
 			})
-			.then(() => {
-				item.status = item.status == 1 ? 0 : 1;
+			.catch(() => {
+				this.layout.hideLoading()
 			})
-			.catch(() => {})
-		},
+			//重置
+			this.shipForm = {
+				express_company: '',
+				express_no: ''
+			}
+			/* this.$refs.shipForm.validate(valid => {
+				if(valid) {
+					if(this.shipId !== '') this.axios.post(`/admin/order/${this.shipId}/ship`, this.shipForm, { token: true })
+					.then(res => {
+						console.log(res)
+					})
+					.catch(() => {})
+				}
+			}) */
+		}
   }
 };
 </script>

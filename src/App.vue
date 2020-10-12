@@ -72,4 +72,8 @@ export default {
 .el-dialog__body .el-form-item {
     margin-bottom: 20px !important;
 }
+/* btn样式 */
+.el-button:hover, .el-button:focus {
+  outline: none;
+}
 </style>

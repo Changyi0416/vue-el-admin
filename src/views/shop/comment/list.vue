@@ -78,7 +78,7 @@
 		  <el-table-column label="商品">
         <template slot-scope="scope">
           <div class="d-flex">
-            <img :src="scope.row.goods_item.cover" alt="" style="width: 80px; height: 80px;">
+            <img :src="scope.row.goods_item.cover" alt="" class="mr-2" style="width: 80px; height: 80px;">
             <h6>{{scope.row.goods_item.title}}</h6>
           </div>
         </template>

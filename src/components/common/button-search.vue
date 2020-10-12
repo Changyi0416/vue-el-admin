@@ -52,6 +52,7 @@
 			//收起高级搜索
 			searchSeniorClose() {
 				this.searchSeniorShow = false;
+				this.keyword = ''
 			}
 		},
 	}

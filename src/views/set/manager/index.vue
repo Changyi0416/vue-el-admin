@@ -1,15 +1,15 @@
 <template>
   <div>
-    <el-tabs v-model="tabIndex" >
-      <el-tab-pane label="管理员列表" name="0">
+    <el-tabs v-model="axiosSign" >
+      <el-tab-pane label="管理员列表" name="manager">
         <div class="d-flex align-items-center mb-2">
-          <el-button class="mb-2" type="primary" @click="addModel" size="medium" v-auth="'添加用户'">添加用户</el-button>
+          <el-button class="mb-2" type="primary" @click="addModel" size="medium" v-auth="'添加用户'">添加管理员</el-button>
           <div class="d-flex ml-auto">
             <el-input class="mr-2" v-model="key" placeholder="请输入" size="medium"></el-input>
             <el-button type="info" @click="search" size="medium">搜索</el-button>
           </div>
         </div>
-        <el-table :data="tableData" border stripe>
+        <el-table :data="tableData" border>
           <el-table-column label="用户头像" prop="name" width="120px" align="center">
             <template slot-scope="scope">
               <img :src="scope.row.avatar" alt="" style="width: 60px; height: 60px; border-radius: 50%;">
@@ -24,7 +24,7 @@
           <el-table-column label="邮箱" prop="email"></el-table-column>
           <el-table-column label="所属用户组">
             <template slot-scope="scope">
-              {{scope.row.group.name}}
+              <!-- {{scope.row.group.name}} -->
             </template>
           </el-table-column>
           <el-table-column label="状态">
@@ -41,7 +41,7 @@
           </el-table-column>
         </el-table>
       </el-tab-pane>
-      <el-tab-pane label="角色列表" name="1">
+      <el-tab-pane label="角色列表" name="role">
         <el-button class="mb-2" type="primary" @click="addModel" size="medium" v-auth="'添加角色'">添加角色</el-button>
         <el-table :data="groupData" border stripe>
           <el-table-column label="角色名称" prop="name" align="center"></el-table-column>
@@ -60,7 +60,7 @@
           </el-table-column>
         </el-table>
       </el-tab-pane>
-      <el-tab-pane label="权限列表" name="2">
+      <el-tab-pane label="权限列表" name="rule">
         <el-tree ref="tree" :data="data" :props="defaultProps" 
         :default-expand-all="true"
         :expand-on-click-node="false"
@@ -88,29 +88,34 @@
         </el-tree>
       </el-tab-pane>
     </el-tabs>
-    
+    <el-footer class="px-0 d-flex align-items-center position-fixed bg-white"
+    style="left:200px; right: 0; bottom: 0; z-index: 4;">
+      <div class="flex-grow-1 px-2 h-100 d-flex align-items-center">
+        <el-pagination v-if="axiosSign != 'rule'"
+          @size-change="pageSizeChange"
+          @current-change="pageCurrentChange"
+          :current-page="page.current"
+          :page-sizes="page.sizes"
+          :page-size="page.size"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="page.total">
+        </el-pagination>
+      </div>
+    </el-footer>
   </div>
 </template>
 
 <script>
+	import common from '@/common/mixins/common.js';
   export default {
+		mixins: [ common ],
+		inject: [ 'layout', 'app' ],
     data() {
       return {
+				axiosSign: 'manager', //请求接口模块标识
+				signText: '管理员', //提示语标识
         key: '',
-        tabIndex: 0,
-        tableData: [{
-          id: 10,
-          username: '用户名',
-          avatar: 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
-          phone: '15677878727',
-          email: '2081098374@qq.com',
-          group_id: 1,
-          group: {
-            id: 1,
-            name: '管理员'
-          },
-          status: 1, //启用
-        }],
+        tableData: [],
         groupData: [{
           name: '超级管理员',
           time: '2020-08-17 00:00:00', 

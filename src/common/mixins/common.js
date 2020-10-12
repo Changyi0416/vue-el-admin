@@ -32,7 +32,7 @@ export default {
 		//处理返回的数据
 		handleData(Data){
 			this.tableData = Data.list
-			if(this.axiosSign == 'goods_comment'){
+			/* if(this.axiosSign == 'goods_comment'){
 				this.tableData.forEach(item => {
 					if(!item.goods_item){
 						item.goods_item = {
@@ -42,7 +42,7 @@ export default {
 						item.user.avatar = 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png'
 					}
 				})
-			}
+			} */
 		},
 		//获取列表数据
 		__init(searchParams){
